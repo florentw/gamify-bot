@@ -67,7 +67,7 @@ class MessagesHandler:
             return
 
         if command == "!help":
-            out = "*Commands*:\n"
+            out = ":robot_face: *Commands*:\n"
             out += "> *!join*: To register your username as a player in da game, `!join &lt;user name&gt;`\n"
             out += "> *!leave*: To leave the game, `!leave`\n"
             out += "> *!score*: Will print the high scores, `!score` or `!scores`\n"
@@ -78,6 +78,7 @@ class MessagesHandler:
             out += "> *!take*: You are taking this task, your score will increase, `!take &lt;task id&gt;`\n"
             out += "> *!drop*: You are dropping this task, your score will decrease, `!drop &lt;task id&gt;`\n"
             out += "> *!help*: Prints the list of commands\n"
+            out += "\n_ GamifyBot v0.1 - github.com/florentw/gamify-bot _\n"
             self.send(channel, out)
             return
 
