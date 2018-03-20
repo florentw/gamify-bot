@@ -1,22 +1,31 @@
+#!/usr/bin/env python
+
 import sqlite3
 
+
 class Player:
-    def __init__(self, slack_id, name, points = 0):
+    def __init__(self, slack_id, name, points=0):
         self.slack_id = slack_id
         self.name = name
         self.points = points
 
     def __str__(self):
-        return self.name +"("+self.slack_id+"), "+str(self.points)+" point(s)"
+        return self.name + "(" + self.slack_id + "), " + str(self.points) + " point(s)"
+
 
 class PlayerRepository:
 
-    def __init__(self, con):
-        self.con = con
+    def __init__(self, connection):
+        self.con = connection
 
         cursor = self.con.cursor()
         cursor.execute("CREATE TABLE IF NOT EXISTS PLAYER (id TEXT PRIMARY KEY, name TEXT, points INTEGER)")
         self.con.commit()
+
+    @staticmethod
+    def player_from_row(row):
+        slack_id, name, points = row
+        return Player(slack_id, name, points)
 
     def get_by_id(self, slack_id):
         cursor = self.con.cursor()
@@ -26,7 +35,7 @@ class PlayerRepository:
         if row is None:
             return None
 
-        return Player(row[0], row[1], row[2])
+        return self.player_from_row(row)
 
     def name_exists(self, name):
         cursor = self.con.cursor()
@@ -36,14 +45,15 @@ class PlayerRepository:
         if row is None:
             return None
 
-        return Player(row[0], row[1], row[2])
+        return self.player_from_row(row)
 
     def add(self, player):
         if self.get_by_id(player.slack_id) is not None:
             return False
 
         cursor = self.con.cursor()
-        cursor.execute("INSERT INTO PLAYER(id, name, points) VALUES (?,?,?)", (player.slack_id, player.name, player.points))
+        cursor.execute("INSERT INTO PLAYER(id, name, points) VALUES (?,?,?)",
+                       (player.slack_id, player.name, player.points))
         self.con.commit()
         return True
 
@@ -65,28 +75,29 @@ class PlayerRepository:
 
         cursor = self.con.cursor()
         cursor.execute("UPDATE PLAYER SET points=? WHERE id=?", (player.points, slack_id))
-        row = cursor.fetchone()
+        con.commit()
         return player
 
     def scores(self):
         cursor = self.con.cursor()
         cursor.execute("SELECT * FROM PLAYER ORDER BY points DESC")
 
-        players = []
+        high_scores = []
         while True:
             row = cursor.fetchone()
-            if row == None:
+            if row is None:
                 break
 
-            players.append(Player(row[0], row[1], row[2]))
+            high_scores.append(Player(row[0], row[1], row[2]))
 
-        return players
+        return high_scores
+
 
 if __name__ == "__main__":
     con = sqlite3.connect(":memory:")
     players = PlayerRepository(con)
-    print players.add(Player("U1","flo"))
-    print players.add(Player("U2","necmi"))
+    print players.add(Player("U1", "flo"))
+    print players.add(Player("U2", "necmi"))
 
     print players.get_by_id("U1")
     print players.get_by_id("0")
@@ -94,7 +105,7 @@ if __name__ == "__main__":
     print players.name_exists("flo")
     print players.name_exists("0")
 
-    print players.add(Player("U1","flo"))
+    print players.add(Player("U1", "flo"))
     print players.remove("U2")
     print players.get_by_id("U2")
 
