@@ -75,7 +75,7 @@ class PlayerRepository:
 
         cursor = self.con.cursor()
         cursor.execute("UPDATE PLAYER SET points=? WHERE id=?", (player.points, slack_id))
-        con.commit()
+        self.con.commit()
         return player
 
     def scores(self):

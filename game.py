@@ -22,7 +22,7 @@ class Game:
         self.high_scores = {}  # User -> Score
         self.players = PlayerRepository(self.connection)
         self.tasks = TaskRepository(self.connection)
-        self.assignments = AssignmentRepository()
+        self.assignments = AssignmentRepository(self.connection)
 
     def close(self):
         self.connection.close()
@@ -99,7 +99,7 @@ class Game:
 
     def list_tasks(self):
         pending = self.tasks.pending()
-        assignements = self.assignments.list()
+        assignments = self.assignments.list()
 
         if len(pending) is 0:
             return True, "No pending task."
@@ -109,8 +109,9 @@ class Game:
             icon = ":white_square:"
             assigned = "`!take " + str(task.uid) + "`"
 
-            if task.uid in assignements:
-                assigned = ":point_right: *" + self.players.get_by_id(assignements[task.uid]).name + "*"
+            slack_id = assignments.get(task.uid)
+            if slack_id is not None:
+                assigned = ":point_right: *" + self.players.get_by_id(slack_id).name + "*"
                 icon = ":heavy_check_mark:"
 
             out += "> " + icon + " [*" + str(task.uid) + "*] *" + task.description + "* [*" + str(
