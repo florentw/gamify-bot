@@ -6,6 +6,7 @@ from assignment import AssignmentRepository
 from player import PlayerRepository, Player
 from task import Task, TaskRepository
 
+MAX_TASK_POINTS = 42
 DATABASE_FILE_NAME = "gamifybot.db"
 
 
@@ -27,13 +28,34 @@ class Game:
     def close(self):
         self.connection.close()
 
-    def add_task(self, slack_id, description):
+    def add_task(self, slack_id, argument):
         if self.players.get_by_id(slack_id) is None:
             return False, "you have to register first: `!join &lt;user name&gt;`"
 
-        task_id = self.tasks.insert(Task(description))
+        (points, msg) = self.points_from(argument)
+        if points is None:
+            return False, msg + ", usage: `!add &lt;points&gt; &lt;description&gt;`"
+
+        if len(argument.split(None, 1)) == 2:
+            description = argument.split(None, 1)[1]
+        else:
+            return False, "invalid arguments: `!add &lt;points&gt; &lt;description&gt;`"
+
+        task_id = self.tasks.insert(Task(description, points))
         return True, "new task *'" + description + "'*, added with id *" + str(
-            task_id) + "*!\nYou can take it by saying: `!take " + str(task_id) + "`"
+            task_id) + "* for *"+points+"*!\nYou can take it by saying: `!take " + str(task_id) + "`"
+
+    @staticmethod
+    def points_from(argument):
+        try:
+            points = int(argument.split(None, 1)[0])
+            if points < 0 or points > MAX_TASK_POINTS:
+                return None, "points must be between 1 and " + str(MAX_TASK_POINTS) + " included"
+            else:
+                return points, ""
+
+        except ValueError:
+            return None, "invalid format for points"
 
     def take_task(self, slack_id, argument):
         player = self.players.get_by_id(slack_id)

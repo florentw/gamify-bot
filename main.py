@@ -72,8 +72,8 @@ class MessagesHandler:
             out += "> *!leave*: To leave the game, `!leave`\n"
             out += "> *!score*: Will print the high scores, `!score` or `!scores`\n"
             out += "> *!tasks*: Will print the pending tasks, `!tasks`\n"
-            out += "> *!add*: Will add a new task to the backlog, which can then be taken by a player, " \
-                   "`!add &lt;task description&gt;`\n"
+            out += "> *!add*: Will add a new task to the backlog to earn points, which can then be taken " \
+                   "by a player, `!add &lt;points&gt; &lt;description&gt;`\n"
             out += "> *!close*: This removes the task from the backlog, no effect on scores, `!close &lt;task id&gt;`\n"
             out += "> *!take*: You are taking this task, your score will increase, `!take &lt;task id&gt;`\n"
             out += "> *!drop*: You are dropping this task, your score will decrease, `!drop &lt;task id&gt;`\n"
