@@ -37,13 +37,22 @@ class Game:
             return False, msg + ", usage: `!add &lt;points&gt; &lt;description&gt;`"
 
         if len(argument.split(None, 1)) == 2:
-            description = argument.split(None, 1)[1]
+            description = self.remove_trailing_quotes(argument.split(None, 1)[1])
+
         else:
             return False, "invalid arguments: `!add &lt;points&gt; &lt;description&gt;`"
 
         task_id = self.tasks.insert(Task(description, points))
-        return True, "new task *'" + description + "'*, added with id *" + str(
-            task_id) + "* for *"+points+"*!\nYou can take it by saying: `!take " + str(task_id) + "`"
+        return True, "new task *'" + description + "'*, added with id *" + str(task_id) + "* for *" + str(points) + \
+               "*!\nYou can take it by saying: `!take " + str(task_id) + "`"
+
+    @staticmethod
+    def remove_trailing_quotes(description):
+        if (description.startswith('"') and description.endswith('"')) or \
+                (description.startswith('\'') and description.endswith('\'')):
+            description = description[1:-1]
+
+        return description
 
     @staticmethod
     def points_from(argument):
