@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sqlite3
+from random import randint
 
 from assignment import AssignmentRepository
 from player import PlayerRepository, Player
@@ -46,84 +47,45 @@ class Game:
         return True, "new task *'" + description + "'*, added with id *" + str(task_id) + "* for *" + str(points) + \
                "*!\nYou can take it by saying: `!take " + str(task_id) + "`"
 
-    @staticmethod
-    def remove_trailing_quotes(description):
-        if (description.startswith('"') and description.endswith('"')) or \
-                (description.startswith('\'') and description.endswith('\'')):
-            description = description[1:-1]
-
-        return description
-
-    @staticmethod
-    def points_from(argument):
-        try:
-            points = int(argument.split(None, 1)[0])
-            if points < 0 or points > MAX_TASK_POINTS:
-                return None, "points must be between 1 and " + str(MAX_TASK_POINTS) + " included"
-            else:
-                return points, ""
-
-        except ValueError:
-            return None, "invalid format for points"
-
     def take_task(self, slack_id, argument):
         player = self.players.get_by_id(slack_id)
         if player is None:
             return False, "you have to register first: `!join &lt;user name&gt;`"
 
-        task_id = self.check_task_id(argument)
-        if task_id is None:
-            return False, "invalid task id"
-
-        task = self.tasks.get(task_id)
+        (task, msg) = self.validate_task(argument)
         if task is None:
-            return False, "this task does not exist."
+            return False, msg
 
-        if self.assignments.assign(task_id, slack_id) is False:
-            return False, "a player is already assigned to this task."
-
-        player = self.players.update_points(slack_id, task.points)
-
-        return True, "You are taking ownership of *" + task.description + "* for " + str(
-            task.points) + " point(s).\nYour new score is *" + str(
-            player.points) + "* point(s).\nIf you want to drop it, say: `!drop " + str(task_id) + "`"
+        return self.assign_and_update_score(slack_id, task)
 
     def close_task(self, slack_id, argument):
         player = self.players.get_by_id(slack_id)
         if player is None:
             return False, "you have to register first: `!join &lt;user name&gt;`"
 
-        task_id = self.check_task_id(argument)
-        if task_id is None:
-            return False, "invalid task id"
-
-        task = self.tasks.get(task_id)
+        (task, msg) = self.validate_task(argument)
         if task is None:
-            return False, "This task does not exist."
+            return False, msg
 
-        self.assignments.remove(task_id)
-        self.tasks.remove(task_id)
-        return True, "The task *" + str(
-            task_id) + "*, *" + task.description + "* has been closed by *" + player.name + "*."
+        self.assignments.remove(task.uid)
+        self.tasks.remove(task.uid)
+        return True, "The task *" + str(task.uid) + "*, *" + task.description + \
+               "* has been closed by *" + player.name + "*."
 
     def drop_task(self, slack_id, argument):
         player = self.players.get_by_id(slack_id)
         if player is None:
             return False, "you have to register first: `!join &lt;user name&gt;`"
 
-        task_id = self.check_task_id(argument)
-        if task_id is None:
-            return False, "invalid task id"
-
-        task = self.tasks.get(task_id)
+        (task, msg) = self.validate_task(argument)
         if task is None:
-            return False, "This task does not exist."
+            return False, msg
 
-        assignee = self.assignments.user_of_task(task_id)
+        assignee = self.assignments.user_of_task(task.uid)
         if assignee != player.slack_id:
             return False, "You are not assigned to this task."
 
-        self.assignments.remove(task_id)
+        self.assignments.remove(task.uid)
         player = self.players.update_points(slack_id, -task.points)
         return True, "You are not assigned to this task anymore, your new score is *" + str(
             player.points) + "* point(s)."
@@ -183,21 +145,6 @@ class Game:
     def list_scores(self):
         return sorted(self.high_scores.items(), key=lambda x: (-x[1], x[0]))
 
-    @staticmethod
-    def check_not_empty(argument):
-        if len(argument) is 0:
-            return False
-
-        return True
-
-    @staticmethod
-    def check_task_id(argument):
-        try:
-            task_id = int(argument)
-            return task_id
-        except ValueError:
-            return None
-
     def leave(self, slack_id):
         if self.players.get_by_id(slack_id) is None:
             return False, "you have to register first: `!join &lt;user name&gt;`"
@@ -217,3 +164,103 @@ class Game:
 
         self.players.add(Player(slack_id, name))
         return True, "you are now registered as *" + name + "*"
+
+    def assign_with_weighted_random(self, argument):
+        (task, msg) = self.validate_task(argument)
+        if task is None:
+            return False, msg
+
+        if self.assignments.user_of_task(task.uid) is not None:
+            return False, "a player is already assigned to this task."
+
+        # Preparing the weighted list of players (weights are the inverse of the high scores)
+        scores = self.players.scores()
+        total = sum(player.points for player in scores)
+        weighted_list = []
+        for player in scores:
+            if player.points is 0:
+                weight = 150  # Skew the distribution to assign more tasks to players with 0 points
+            else:
+                weight = 100 - int(((float(player.points)) / total) * 100)
+
+            weighted_list.append((weight, player))
+
+        # Random pick
+        player = self.weighted_random(weighted_list)
+
+        return self.assign_and_update_score(player.slack_id, task,
+                                            ":game_die: *The universe has spoken, "
+                                            "congrats <@" + player.slack_id + ">!*\n")
+
+    def assign_and_update_score(self, slack_id, task, additional_msg=""):
+        assignee = self.assignments.user_of_task(task.uid)
+        if assignee == slack_id:
+            return False, "you are already assigned to this task."
+
+        if self.assignments.assign(task.uid, slack_id) is False:
+            return False, "a player is already assigned to this task."
+
+        player = self.players.update_points(slack_id, task.points)
+        message = self.ownership_message(player, task)
+        return True, additional_msg + message
+
+    def validate_task(self, argument):
+        task_id = self.check_task_id(argument)
+        if task_id is None:
+            return None, "invalid task id"
+
+        task = self.tasks.get(task_id)
+        if task is None:
+            return None, "this task does not exist."
+
+        return task, ""
+
+    @staticmethod
+    def ownership_message(player, task):
+        return "You are taking ownership of *" + task.description + "* for " + str(task.points) + \
+               " point(s).\nYour new score is *" + str(player.points) + \
+               "* point(s).\nIf you want to drop it, say: `!drop " + str(task.uid) + "`"
+
+    @staticmethod
+    def weighted_random(pairs):
+        total = sum(pair[0] for pair in pairs)
+        r = randint(1, total)
+        for (weight, value) in pairs:
+            r -= weight
+            if r <= 0:
+                return value
+
+    @staticmethod
+    def check_not_empty(argument):
+        if len(argument) is 0:
+            return False
+
+        return True
+
+    @staticmethod
+    def check_task_id(argument):
+        try:
+            task_id = int(argument)
+            return task_id
+        except ValueError:
+            return None
+
+    @staticmethod
+    def remove_trailing_quotes(description):
+        if (description.startswith('"') and description.endswith('"')) or \
+                (description.startswith('\'') and description.endswith('\'')):
+            description = description[1:-1]
+
+        return description
+
+    @staticmethod
+    def points_from(argument):
+        try:
+            points = int(argument.split(None, 1)[0])
+            if points < 0 or points > MAX_TASK_POINTS:
+                return None, "points must be between 1 and " + str(MAX_TASK_POINTS) + " included"
+            else:
+                return points, ""
+
+        except ValueError:
+            return None, "invalid format for points"

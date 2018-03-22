@@ -71,7 +71,7 @@ class PlayerRepository:
         if player is None:
             return None
 
-        player.points = player.points + points_earned
+        player.points = max(player.points + points_earned, 0)
 
         cursor = self.con.cursor()
         cursor.execute("UPDATE PLAYER SET points=? WHERE id=?", (player.points, slack_id))

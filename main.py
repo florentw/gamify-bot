@@ -7,8 +7,7 @@ from slackclient import SlackClient
 
 from game import Game
 
-# constants
-RTM_READ_DELAY = 1  # 1 second delay between reading from RTM
+RTM_READ_DELAY = 0.8  # delay between readings from RTM
 
 
 class MessagesHandler:
@@ -46,6 +45,11 @@ class MessagesHandler:
             self.send(channel, "<@" + from_slack_id + ">, " + out)
             return
 
+        if command == "!roulette":
+            (status, out) = self.game.assign_with_weighted_random(argument)
+            self.send(channel, out)
+            return
+
         if command == "!drop":
             (status, out) = self.game.drop_task(from_slack_id, argument)
             self.send(channel, "<@" + from_slack_id + ">, " + out)
@@ -77,8 +81,10 @@ class MessagesHandler:
             out += "> *!close*: This removes the task from the backlog, no effect on scores, `!close &lt;task id&gt;`\n"
             out += "> *!take*: You are taking this task, your score will increase, `!take &lt;task id&gt;`\n"
             out += "> *!drop*: You are dropping this task, your score will decrease, `!drop &lt;task id&gt;`\n"
+            out += "> *!roulette*: The universe will assign this task to someone (weighted random)! " \
+                   "`!roulette &lt;task id&gt;`\n"
             out += "> *!help*: Prints the list of commands\n"
-            out += "\n_ GamifyBot v0.1 - github.com/florentw/gamify-bot _\n"
+            out += "\n_ GamifyBot v0.2 - github.com/florentw/gamify-bot _\n"
             self.send(channel, out)
             return
 
