@@ -44,8 +44,9 @@ class Game:
             return False, "invalid arguments: `!add &lt;points&gt; &lt;description&gt;`"
 
         task_id = self.tasks.insert(Task(description, points))
-        return True, "new task *'" + description + "'*, added with id *" + str(task_id) + "* for *" + str(points) + \
-               "*!\nYou can take it by saying: `!take " + str(task_id) + "`"
+        return True,\
+               "new task *'" + description + "'*, added with id *" + str(task_id) + "* for *" + str(points) + \
+               "* point(s)!\nYou can take it by saying: `!take " + str(task_id) + "`"
 
     def take_task(self, slack_id, argument):
         player = self.players.get_by_id(slack_id)
@@ -136,9 +137,8 @@ class Game:
             if place == 3:
                 medal = ":third_place_medal:"
 
-            out += "> " + str(
-                index + 1) + ". " + medal + " *" + player.name + "* (<@" + player.slack_id + ">) with *" + str(
-                player.points) + "* point(s)\n"
+            out += "> " + str(index + 1) + ". " + medal + " *" + player.name + \
+                   "* (<@" + player.slack_id + ">) with *" + str(player.points) + "* point(s)\n"
 
         return True, out
 
@@ -264,3 +264,21 @@ class Game:
 
         except ValueError:
             return None, "invalid format for points"
+
+    @staticmethod
+    def help():
+        out = ":robot_face: *Commands*:\n"
+        out += "> *!join*: To register your username as a player in da game, `!join &lt;user name&gt;`\n"
+        out += "> *!leave*: To leave the game, `!leave`\n"
+        out += "> *!score*: Will print the high scores, `!score` or `!scores`\n"
+        out += "> *!tasks*: Will print the pending tasks, `!tasks`\n"
+        out += "> *!add*: Will add a new task to the backlog to earn points, which can then be taken " \
+               "by a player, `!add &lt;points&gt; &lt;description&gt;`\n"
+        out += "> *!close*: This removes the task from the backlog, no effect on scores, `!close &lt;task id&gt;`\n"
+        out += "> *!take*: You are taking this task, your score will increase, `!take &lt;task id&gt;`\n"
+        out += "> *!drop*: You are dropping this task, your score will decrease, `!drop &lt;task id&gt;`\n"
+        out += "> *!roulette*: The universe will assign this task to someone (weighted random)! " \
+               "`!roulette &lt;task id&gt;`\n"
+        out += "> *!help*: Prints the list of commands\n"
+        out += "\n_ GamifyBot v0.2 - github.com/florentw/gamify-bot _\n"
+        return out
