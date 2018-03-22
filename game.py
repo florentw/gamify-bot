@@ -30,28 +30,31 @@ class Game:
         self.connection.close()
 
     def add_task(self, slack_id, argument):
+        header = "<@" + slack_id + ">, "
+
         if self.players.get_by_id(slack_id) is None:
-            return False, "you have to register first: `!join &lt;user name&gt;`"
+            return False, header + "you have to register first: `!join &lt;user name&gt;`"
 
         (points, msg) = self.points_from(argument)
         if points is None:
-            return False, msg + ", usage: `!add &lt;points&gt; &lt;description&gt;`"
+            return False, header + msg + ", usage: `!add &lt;points&gt; &lt;description&gt;`"
 
         if len(argument.split(None, 1)) == 2:
             description = self.remove_trailing_quotes(argument.split(None, 1)[1])
 
         else:
-            return False, "invalid arguments: `!add &lt;points&gt; &lt;description&gt;`"
+            return False, header + "invalid arguments: `!add &lt;points&gt; &lt;description&gt;`"
 
         task_id = self.tasks.insert(Task(description, points))
-        return True,\
-               "new task *'" + description + "'*, added with id *" + str(task_id) + "* for *" + str(points) + \
-               "* point(s)!\nYou can take it by saying: `!take " + str(task_id) + "`"
+        return True, header + "new task *'" + description + "'*, added with id *" + str(task_id) + "* for *" + str(
+            points) + "* point(s)!\nYou can take it by saying: `!take " + str(task_id) + "`"
 
     def take_task(self, slack_id, argument):
+        header = "<@" + slack_id + ">, "
+
         player = self.players.get_by_id(slack_id)
         if player is None:
-            return False, "you have to register first: `!join &lt;user name&gt;`"
+            return False, header + "you have to register first: `!join &lt;user name&gt;`"
 
         (task, msg) = self.validate_task(argument)
         if task is None:
@@ -60,9 +63,11 @@ class Game:
         return self.assign_and_update_score(slack_id, task)
 
     def close_task(self, slack_id, argument):
+        header = "<@" + slack_id + ">, "
+
         player = self.players.get_by_id(slack_id)
         if player is None:
-            return False, "you have to register first: `!join &lt;user name&gt;`"
+            return False, header + "you have to register first: `!join &lt;user name&gt;`"
 
         (task, msg) = self.validate_task(argument)
         if task is None:
@@ -70,13 +75,15 @@ class Game:
 
         self.assignments.remove(task.uid)
         self.tasks.remove(task.uid)
-        return True, "The task *" + str(task.uid) + "*, *" + task.description + \
+        return True, header + "the task *" + str(task.uid) + "*, *" + task.description + \
                "* has been closed by *" + player.name + "*."
 
     def drop_task(self, slack_id, argument):
+        header = "<@" + slack_id + ">, "
+
         player = self.players.get_by_id(slack_id)
         if player is None:
-            return False, "you have to register first: `!join &lt;user name&gt;`"
+            return False, header + "you have to register first: `!join &lt;user name&gt;`"
 
         (task, msg) = self.validate_task(argument)
         if task is None:
@@ -84,14 +91,14 @@ class Game:
 
         assignee = self.assignments.user_of_task(task.uid)
         if assignee != player.slack_id:
-            return False, "You are not assigned to this task."
+            return False, header + "you are not assigned to this task."
 
         self.assignments.remove(task.uid)
         player = self.players.update_points(slack_id, -task.points)
-        return True, "You are not assigned to this task anymore, your new score is *" + str(
-            player.points) + "* point(s)."
+        return True, header + "you are not assigned to this task anymore, " \
+                              "your new score is *" + str(player.points) + "* point(s)."
 
-    def list_tasks(self):
+    def list_tasks(self, slack_id, argument):
         pending = self.tasks.pending()
         assignments = self.assignments.list()
 
@@ -113,7 +120,7 @@ class Game:
 
         return True, out
 
-    def list_high_scores(self):
+    def list_high_scores(self, slack_id, argument):
         scores = self.players.scores()
 
         if len(scores) is 0:
@@ -145,27 +152,31 @@ class Game:
     def list_scores(self):
         return sorted(self.high_scores.items(), key=lambda x: (-x[1], x[0]))
 
-    def leave(self, slack_id):
+    def leave(self, slack_id, argument):
+        header = "<@" + slack_id + ">, "
+
         if self.players.get_by_id(slack_id) is None:
             return False, "you have to register first: `!join &lt;user name&gt;`"
 
         self.players.remove(slack_id)
-        return True, "you are now unregistered."
+        return True, header + "you are now unregistered."
 
     def join(self, slack_id, name):
+        header = "<@" + slack_id + ">, "
+
         if self.check_not_empty(name) is False:
-            return False, "you have to provide a valid user name: `!join &lt;user name&gt;`"
+            return False, header + "you have to provide a valid user name: `!join &lt;user name&gt;`"
 
         if self.players.get_by_id(slack_id) is not None:
-            return False, "you are already registered"
+            return False, header + "you are already registered"
 
         if self.players.name_exists(name):
-            return False, "someone is already registered with that name"
+            return False, header + "someone is already registered with that name"
 
         self.players.add(Player(slack_id, name))
-        return True, "you are now registered as *" + name + "*"
+        return True, header + "you are now registered as *" + name + "*"
 
-    def assign_with_weighted_random(self, argument):
+    def assign_with_weighted_random(self, slack_id, argument):
         (task, msg) = self.validate_task(argument)
         if task is None:
             return False, msg
@@ -192,17 +203,36 @@ class Game:
                                             ":game_die: *The universe has spoken, "
                                             "congrats <@" + player.slack_id + ">!*\n")
 
+    def help(self, slack_id, argument):
+        out = ":robot_face: *Commands*:\n"
+        out += "> *!join*: To register your username as a player in da game, `!join &lt;user name&gt;`\n"
+        out += "> *!leave*: To leave the game, `!leave`\n"
+        out += "> *!score*: Will print the high scores, `!score` or `!scores`\n"
+        out += "> *!tasks*: Will print the pending tasks, `!tasks`\n"
+        out += "> *!add*: Will add a new task to the backlog to earn points, which can then be taken " \
+               "by a player, `!add &lt;points&gt; &lt;description&gt;`\n"
+        out += "> *!close*: This removes the task from the backlog, no effect on scores, `!close &lt;task id&gt;`\n"
+        out += "> *!take*: You are taking this task, your score will increase, `!take &lt;task id&gt;`\n"
+        out += "> *!drop*: You are dropping this task, your score will decrease, `!drop &lt;task id&gt;`\n"
+        out += "> *!roulette*: The universe will assign this task to someone (weighted random)! " \
+               "`!roulette &lt;task id&gt;`\n"
+        out += "> *!help*: Prints the list of commands\n"
+        out += "\n_ GamifyBot v0.2 - github.com/florentw/gamify-bot _\n"
+        return True, out
+
     def assign_and_update_score(self, slack_id, task, additional_msg=""):
+        header = "<@" + slack_id + ">, "
+
         assignee = self.assignments.user_of_task(task.uid)
         if assignee == slack_id:
-            return False, "you are already assigned to this task."
+            return False, header + "you are already assigned to this task."
 
         if self.assignments.assign(task.uid, slack_id) is False:
-            return False, "a player is already assigned to this task."
+            return False, header + "a player is already assigned to this task."
 
         player = self.players.update_points(slack_id, task.points)
         message = self.ownership_message(player, task)
-        return True, additional_msg + message
+        return True, header + additional_msg + message
 
     def validate_task(self, argument):
         task_id = self.check_task_id(argument)
@@ -256,7 +286,11 @@ class Game:
     @staticmethod
     def points_from(argument):
         try:
-            points = int(argument.split(None, 1)[0])
+            split = argument.split(None, 1)
+            if split is None or len(split) == 0:
+                return None, "invalid arguments"
+
+            points = int(split[0])
             if points < 0 or points > MAX_TASK_POINTS:
                 return None, "points must be between 1 and " + str(MAX_TASK_POINTS) + " included"
             else:
@@ -265,20 +299,15 @@ class Game:
         except ValueError:
             return None, "invalid format for points"
 
-    @staticmethod
-    def help():
-        out = ":robot_face: *Commands*:\n"
-        out += "> *!join*: To register your username as a player in da game, `!join &lt;user name&gt;`\n"
-        out += "> *!leave*: To leave the game, `!leave`\n"
-        out += "> *!score*: Will print the high scores, `!score` or `!scores`\n"
-        out += "> *!tasks*: Will print the pending tasks, `!tasks`\n"
-        out += "> *!add*: Will add a new task to the backlog to earn points, which can then be taken " \
-               "by a player, `!add &lt;points&gt; &lt;description&gt;`\n"
-        out += "> *!close*: This removes the task from the backlog, no effect on scores, `!close &lt;task id&gt;`\n"
-        out += "> *!take*: You are taking this task, your score will increase, `!take &lt;task id&gt;`\n"
-        out += "> *!drop*: You are dropping this task, your score will decrease, `!drop &lt;task id&gt;`\n"
-        out += "> *!roulette*: The universe will assign this task to someone (weighted random)! " \
-               "`!roulette &lt;task id&gt;`\n"
-        out += "> *!help*: Prints the list of commands\n"
-        out += "\n_ GamifyBot v0.2 - github.com/florentw/gamify-bot _\n"
-        return out
+    def commands(self):
+        return dict([("!join", self.join),
+                     ("!leave", self.leave),
+                     ("!add", self.add_task),
+                     ("!take", self.take_task),
+                     ("!roulette", self.assign_with_weighted_random),
+                     ("!drop", self.drop_task),
+                     ("!close", self.close_task),
+                     ("!score", self.list_high_scores),
+                     ("!scores", self.list_high_scores),
+                     ("!tasks", self.list_tasks),
+                     ("!help", self.help)])
