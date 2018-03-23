@@ -4,7 +4,6 @@ import os
 import time
 
 from slackclient import SlackClient
-
 from game import Game
 
 RTM_READ_DELAY = 1  # delay between readings from RTM

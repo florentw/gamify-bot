@@ -16,4 +16,8 @@ In order to **bring back fun to these routine tasks**, and to **even out the loa
 
 ## Game rules
 
-Please refer to the following document for game rules: [Game rules](./docs/MANUAL.md)
+Please refer to the following document for game rules: [Game rules](docs/game-rules.md).
+
+## License
+
+GamifyBot is licensed under the [MIT License](./LICENSE).
