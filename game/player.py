@@ -14,6 +14,9 @@ class Player:
 
 
 class PlayerRepository:
+    """
+    This class is responsible for the storage and querying of players.
+    """
 
     def __init__(self, connection):
         self.con = connection
