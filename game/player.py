@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import sqlite3
-
 
 class Player:
     def __init__(self, slack_id, name, points=0):
@@ -94,23 +92,3 @@ class PlayerRepository:
             high_scores.append(Player(row[0], row[1], row[2]))
 
         return high_scores
-
-
-if __name__ == "__main__":
-    con = sqlite3.connect(":memory:")
-    players = PlayerRepository(con)
-    print players.add(Player("U1", "flo"))
-    print players.add(Player("U2", "necmi"))
-
-    print players.get_by_id("U1")
-    print players.get_by_id("0")
-
-    print players.name_exists("flo")
-    print players.name_exists("0")
-
-    print players.add(Player("U1", "flo"))
-    print players.remove("U2")
-    print players.get_by_id("U2")
-
-    print players.update_points("U1", 10)
-    print players.get_by_id("U1")

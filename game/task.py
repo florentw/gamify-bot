@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import sqlite3
 import time
 
 TASK_ASSIGNMENT_PERIOD = 900  # Assignment period: after this timeout, tasks will be automatically assigned to someone
@@ -91,25 +90,3 @@ class TaskRepository:
         cursor = self.con.cursor()
         cursor.execute("DELETE FROM TASK WHERE id=?", (uid,))
         self.con.commit()
-
-
-if __name__ == "__main__":
-    con = sqlite3.connect(":memory:")
-    tasks = TaskRepository(con)
-
-    tasks.insert(Task("Hello world"))
-    tasks.insert(Task("Bouh"))
-    print tasks.get(1)
-    print tasks.get(0)
-    print tasks.get(2)
-    for t in tasks.pending():
-        print "-> " + str(t)
-
-    tasks.remove(1)
-
-    for t in tasks.pending():
-        print "-> " + str(t)
-
-    tasks.remove(0)
-
-    con.close()
