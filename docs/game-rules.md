@@ -30,9 +30,7 @@ Use the `!join` command to register a username that will be linked to you Slack 
 
 `!join <user name>`
 
-<!--
 ![Example: registering a user](./img/gamify_join.png "Example: registering a user")
--->
 
 ### <a name="leave_command"></a> Leave the game
 
@@ -40,9 +38,7 @@ Use the `!leave` command to delete your user from the game (your score is also l
 
 `!leave`
 
-<!--
 ![Example: leaving the game](./img/gamify_leave.png "Example: leaving the game")
--->
 
 ### <a name="add_command"></a> Add a task to the backlog
 
