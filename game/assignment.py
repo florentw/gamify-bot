@@ -12,7 +12,7 @@ class AssignmentRepository:
 
         cursor = self.con.cursor()
         cursor.execute("CREATE TABLE IF NOT EXISTS ASSIGNMENT "
-                       "(task_id INTEGER, slack_id TEXT, UNIQUE(task_id, slack_id))")
+                       "(task_id INTEGER NOT NULL UNIQUE, slack_id TEXT NOT NULL, UNIQUE(task_id, slack_id))")
         self.con.commit()
 
     def __str__(self):
@@ -21,7 +21,7 @@ class AssignmentRepository:
             return "No assignments."
 
         out = "Current assignments:\n"
-        for task_id, slack_id in assignments:
+        for task_id, slack_id in assignments.items():
             out += "-> " + str(task_id) + " is assigned to " + slack_id + "\n"
 
         return out
@@ -65,26 +65,3 @@ class AssignmentRepository:
             assign_dict[task_id] = slack_id
 
         return assign_dict
-
-
-if __name__ == "__main__":
-    con = sqlite3.connect(":memory:")
-    repository = AssignmentRepository(con)
-
-    print repository.assign(1337, "flo")
-    print repository.assign(1338, "jihad")
-
-    print repository.assign(1337, "flo")
-
-    print repository.list()
-
-    print repository.user_of_task(1337)
-    print repository.user_of_task(0)
-
-    print repository
-
-    repository.remove(1337)
-
-    print repository
-
-    con.close()
