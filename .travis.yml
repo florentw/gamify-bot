@@ -5,7 +5,9 @@ python:
 
 # install dependencies
 install:
-  - pip install -r requirements.txt
+  - sudo pip install --upgrade pip
+  - sudo pip install -r requirements.txt
+  - sudo pip install pytest
 
 # run tests
 script:
