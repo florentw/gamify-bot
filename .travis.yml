@@ -1,0 +1,12 @@
+language: pythons
+
+python:
+  - "2.7"
+
+# install dependencies
+install:
+  - pip install -r requirements.txt
+
+# run tests
+script:
+  - pytest
