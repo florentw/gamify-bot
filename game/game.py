@@ -22,13 +22,19 @@ class Game:
 
     def __init__(self):
         self.connection = sqlite3.connect(DATABASE_FILE_NAME)
-        self.high_scores = {}  # User -> Score
         self.players = PlayerRepository(self.connection)
         self.tasks = TaskRepository(self.connection)
         self.assignments = AssignmentRepository(self.connection)
         self.commands_dict = self.commands()
 
     def commands(self):
+        """
+        Each method listed in the below ordered dict must have the following arguments is that exact order:
+        (self, slack_id, argument)
+
+        :return: A dict of commands and their associated method and description.
+        """
+
         c = collections.OrderedDict()
         c["!join"] = (self.join, "To register your username as a player in da game, `!join &lt;user name&gt;`")
         c["!leave"] = (self.leave, "To leave the game, `!leave`")
@@ -175,9 +181,6 @@ class Game:
             return ":third_place_medal:"
 
         return ":white_small_square:"
-
-    def list_scores(self):
-        return sorted(self.high_scores.items(), key=lambda x: (-x[1], x[0]))
 
     def leave(self, slack_id, argument):
         header = self.header(slack_id)
