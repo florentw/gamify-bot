@@ -16,7 +16,9 @@ Experience has shown that **team members are reluctant to perform those tasks**,
 
 In order to **bring back fun to these routine tasks**, and to **even out the load on the team**, we decided to experiment with gamification, and the idea of **GamifyBot** was born during a team retrospective!
 
-![Gamify scores](./docs/img/gamify_scores.png "Gamify scores")
+| High Scores                                                    |  Tasks list
+|----------------------------------------------------------------|---------------------------------------------------
+| ![Gamify scores](./docs/img/gamify_scores.png "Gamify scores") | ![Gamify tasks](./docs/img/gamify_tasks.png "Gamify tasks")
 
 ## Game rules
 
