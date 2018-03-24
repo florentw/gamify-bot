@@ -4,14 +4,17 @@ import os
 import time
 
 from slackclient import SlackClient
+
 from game import Game
 
 RTM_READ_DELAY = 1  # delay between readings from RTM
+DATABASE_FILE_NAME = "gamifybot.db"
 
 
 class MessagesHandler:
+
     def __init__(self, client):
-        self.game = Game()
+        self.game = Game(DATABASE_FILE_NAME)
         self.commands = self.game.commands()
         self.slack_client = client
 

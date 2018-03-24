@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 
 import collections
-from random import randint
 import sqlite3
+from random import randint
 
 from assignment import AssignmentRepository
 from player import PlayerRepository, Player
 from task import Task, TaskRepository
 
 MAX_TASK_POINTS = 42
-DATABASE_FILE_NAME = "gamifybot.db"
 
 
 class Game:
@@ -20,8 +19,8 @@ class Game:
     and will earn an amount of points that was defined when adding it.
     """
 
-    def __init__(self):
-        self.connection = sqlite3.connect(DATABASE_FILE_NAME)
+    def __init__(self, sqlite_database):
+        self.connection = sqlite3.connect(sqlite_database)
         self.players = PlayerRepository(self.connection)
         self.tasks = TaskRepository(self.connection)
         self.assignments = AssignmentRepository(self.connection)
@@ -68,7 +67,6 @@ class Game:
 
         if len(argument.split(None, 1)) == 2:
             description = self.remove_trailing_quotes(argument.split(None, 1)[1])
-
         else:
             return False, header + "invalid arguments: `!add &lt;points&gt; &lt;description&gt;`"
 
@@ -77,13 +75,15 @@ class Game:
             points) + "* point(s)!\nYou can take it by saying: `!take " + str(task_id) + "`"
 
     def take_task(self, slack_id, argument):
+        header = self.header(slack_id)
+
         player, msg = self.check_registered(slack_id)
         if player is None:
             return False, msg
 
         (task, msg) = self.validate_task(argument)
         if task is None:
-            return False, msg
+            return False, header + msg
 
         return self.assign_and_update_score(slack_id, task)
 
@@ -123,7 +123,7 @@ class Game:
         return True, header + "you are not assigned to this task anymore, " \
                               "your new score is *" + str(player.points) + "* point(s)."
 
-    def list_tasks(self, slack_id, argument):
+    def list_tasks(self, slack_id=None, argument=None):
         pending = self.tasks.pending()
         assignments = self.assignments.list()
 
@@ -145,7 +145,7 @@ class Game:
 
         return True, out
 
-    def list_high_scores(self, slack_id, argument):
+    def list_high_scores(self, slack_id=None, argument=None):
         scores = self.players.scores()
 
         if len(scores) is 0:
@@ -182,7 +182,7 @@ class Game:
 
         return ":white_small_square:"
 
-    def leave(self, slack_id, argument):
+    def leave(self, slack_id, argument=None):
         header = self.header(slack_id)
 
         if self.players.get_by_id(slack_id) is None:
@@ -207,6 +207,10 @@ class Game:
         return True, header + "you are now registered as *" + argument + "*"
 
     def assign_with_weighted_random(self, slack_id, argument):
+        player, msg = self.check_registered(slack_id)
+        if player is None:
+            return False, msg
+
         (task, msg) = self.validate_task(argument)
         if task is None:
             return False, msg
@@ -233,19 +237,21 @@ class Game:
                                             ":game_die: *The universe has spoken, "
                                             "congrats <@" + player.slack_id + ">!*\n")
 
-    def help(self, slack_id, argument):
+    def help(self, slack_id=None, argument=None):
         out = ":robot_face: *Commands*:\n"
 
         for command, (function, description) in self.commands_dict.items():
-            out += "> *"+command+"*: "+description+"\n"
+            out += "> *" + command + "*: " + description + "\n"
 
         out += "\n_ GamifyBot v0.2 - github.com/florentw/gamify-bot _\n"
         return True, out
 
     def check_registered(self, slack_id):
         player = self.players.get_by_id(slack_id)
+
         if player is None:
-            return False, self.header(slack_id) + "you have to register first: `!join &lt;user name&gt;`"
+            return None, self.header(slack_id) + "you have to register first: `!join &lt;user name&gt;`"
+
         return player, ""
 
     @staticmethod
@@ -279,7 +285,7 @@ class Game:
 
     @staticmethod
     def ownership_message(player, task):
-        return "You are taking ownership of *" + task.description + "* for " + str(task.points) + \
+        return "you are taking ownership of *" + task.description + "* for " + str(task.points) + \
                " point(s).\nYour new score is *" + str(player.points) + \
                "* point(s).\nIf you want to drop it, say: `!drop " + str(task.uid) + "`"
 
