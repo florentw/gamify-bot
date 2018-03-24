@@ -1,7 +1,7 @@
 import sqlite3
 from unittest import TestCase
 
-from player import PlayerRepository, Player
+from game.player import PlayerRepository, Player
 
 SLACK_ID_1 = "U1"
 USER_1 = "user1"
