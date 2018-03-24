@@ -43,9 +43,7 @@ $ docker run -it --rm -e SLACK_BOT_TOKEN=$SLACK_BOT_TOKEN --name gamify-bot-repl
 GamifyBot connected and running!
 ```
 
-<aside class="warning">
-Keep your SLACK_BOT_TOKEN secret, do not pass the value directly as argument of the command.
-</aside>
+**Warning**: Keep your `SLACK_BOT_TOKEN` secret, do not pass the value directly as argument to the command.
 
 ## License
 
