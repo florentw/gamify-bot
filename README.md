@@ -1,5 +1,7 @@
 # Gamify Bot
 
+![Build status](https://travis-ci.org/florentw/gamify-bot.svg?branch=master)
+
 The **GamifyBot** is a [Slack](https://slack.com/) **chat bot** written in [Python](https://www.python.org/) to gamify shared team tasks assignement in agile teams.
 
 All development teams have **routine tasks** that need to be **shared among team members**, for instance:
