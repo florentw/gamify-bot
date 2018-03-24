@@ -1,6 +1,6 @@
 # Gamify Bot
 
-![Build status](https://travis-ci.org/florentw/gamify-bot.svg?branch=master)
+[![Build status](https://travis-ci.org/florentw/gamify-bot.svg?branch=master)](https://travis-ci.org/florentw/gamify-bot)
 
 The **GamifyBot** is a [Slack](https://slack.com/) **chat bot** written in [Python](https://www.python.org/) to gamify shared team tasks assignement in agile teams.
 
