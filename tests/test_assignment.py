@@ -1,7 +1,7 @@
 import sqlite3
 from unittest import TestCase
 
-from assignment import AssignmentRepository
+from game.assignment import AssignmentRepository
 
 TASK_ID = 1337
 OTHER_TASK_ID = 1334

@@ -1,7 +1,7 @@
 import sqlite3
 from unittest import TestCase
 
-from task import TaskRepository, Task
+from game.task import TaskRepository, Task
 
 
 class TestTaskRepository(TestCase):
