@@ -20,7 +20,10 @@ class PlayerRepository:
         self.con = connection
 
         cursor = self.con.cursor()
-        cursor.execute("CREATE TABLE IF NOT EXISTS PLAYER (id TEXT PRIMARY KEY, name TEXT, points INTEGER)")
+        cursor.execute("CREATE TABLE IF NOT EXISTS PLAYER ("
+                       "id TEXT PRIMARY KEY NOT NULL, "
+                       "name TEXT NOT NULL UNIQUE, "
+                       "points INTEGER NOT NULL)")
         self.con.commit()
 
     @staticmethod

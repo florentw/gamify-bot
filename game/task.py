@@ -34,8 +34,11 @@ class TaskRepository:
         self.con = connection
 
         cursor = self.con.cursor()
-        cursor.execute("CREATE TABLE IF NOT EXISTS TASK "
-                       "(id INTEGER PRIMARY KEY ASC, inserted TEXT, points INTEGER, description TEXT)")
+        cursor.execute("CREATE TABLE IF NOT EXISTS TASK ("
+                       "id INTEGER PRIMARY KEY ASC NOT NULL, "
+                       "inserted TEXT NOT NULL, "
+                       "points INTEGER NOT NULL, "
+                       "description TEXT NOT NULL)")
         self.con.commit()
 
     @staticmethod
