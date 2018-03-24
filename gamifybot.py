@@ -49,6 +49,14 @@ class MessagesHandler:
             traceback.print_exc()
 
 
+def is_message(received_event):
+    return "type" in received_event and received_event["type"] == "message"
+
+
+def has_right_params(received_event):
+    return "user" in received_event and "text" in received_event and "channel" in received_event
+
+
 if __name__ == "__main__":
 
     # instantiate Slack client
@@ -62,8 +70,7 @@ if __name__ == "__main__":
             events = slack_client.rtm_read()
 
             for event in events:
-                if "type" in event and event["type"] == "message" and \
-                        "user" in event and "text" in event and "channel" in event:
+                if is_message(event) and has_right_params(event):
                     handler.on_message(event["channel"], event["user"], event["text"])
                 else:
                     print "Received event " + str(event)
