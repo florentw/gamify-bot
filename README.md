@@ -18,7 +18,39 @@ In order to **bring back fun to these routine tasks**, and to **even out the loa
 
 ## Game rules
 
-Please refer to the following document for game rules: [Game rules](docs/game-rules.md).
+If you are looking for a **user guide**, please refer to the following document: [Game rules](docs/game-rules.md).
+
+## Running the bot with python on Linux
+
+You will need Python 2.7 and `pip` installed, then you can use `virtualenv` to create an environment for your instance.
+
+At the root of the project directory, run:
+
+```bash
+# Install virtualenv
+sudo pip install virtualenv
+
+# Creates the environment
+virtualenv --python=/usr/bin/python2.7 env
+
+# Activate the environment
+source env/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+Then you need to provide your *Slack bot token* (please refer to [Slack's documentation](https://api.slack.com/bot-users))
+
+And you are now ready to run the bot:
+
+```bash
+# Export your slack bot token to be passed to the bot
+export SLACK_BOT_TOKEN=xoxb-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+python gamifybot.py
+-> GamifyBot connected and running!
+```
 
 ## Running the bot from Docker
 
@@ -26,8 +58,8 @@ You can use [Docker](https://www.docker.com/) to run the GamifyBot, it is very e
 
 At the root of the project directory, start by building the Docker image:
 
-```
-$ docker build -t gamify-bot .
+```bash
+docker build -t gamify-bot .
 
 [...]
 
@@ -38,11 +70,11 @@ Successfully tagged gamify-bot:latest
 Then you need to provide your *Slack bot token* (please refer to [Slack's documentation](https://api.slack.com/bot-users))
 and run the container from the freshly built image:
 
-```
-$ export SLACK_BOT_TOKEN=xoxb-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+```bash
+export SLACK_BOT_TOKEN=xoxb-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-$ docker run -it --rm -e SLACK_BOT_TOKEN=$SLACK_BOT_TOKEN --name gamify-bot-replica gamify-bot
-GamifyBot connected and running!
+docker run -it --rm -e SLACK_BOT_TOKEN=$SLACK_BOT_TOKEN --name gamify-bot-replica gamify-bot
+-> GamifyBot connected and running!
 ```
 
 **Warning**: Keep your `SLACK_BOT_TOKEN` secret, do not pass the value directly as argument to the command.
@@ -54,4 +86,3 @@ GamifyBot is licensed under the liberal [MIT License](./LICENSE).
 ## Contribution
 
 Pull requests are more than welcome!
-
