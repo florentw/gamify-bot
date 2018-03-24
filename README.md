@@ -1,8 +1,10 @@
 # Gamify Bot
 
 [![Build status](https://travis-ci.org/florentw/gamify-bot.svg?branch=master)](https://travis-ci.org/florentw/gamify-bot)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/03b56167306baeca919d/test_coverage)](https://codeclimate.com/github/florentw/gamify-bot/test_coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/03b56167306baeca919d/maintainability)](https://codeclimate.com/github/florentw/gamify-bot/maintainability)
 
-The **GamifyBot** is a [Slack](https://slack.com/) **chat bot** written in [Python](https://www.python.org/) to gamify shared team tasks assignement in agile teams.
+**GamifyBot** is a [Slack](https://slack.com/) **chat bot** written in [Python](https://www.python.org/) to gamify shared team tasks assignement in agile teams.
 
 All development teams have **routine tasks** that need to be **shared among team members**, for instance:
 - Analysis of support issues before inserting them in the team's backlog
