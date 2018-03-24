@@ -13,8 +13,12 @@ DATABASE_FILE_NAME = "gamifybot.db"
 
 class MessagesHandler:
 
-    def __init__(self, client):
-        self.game = Game(DATABASE_FILE_NAME)
+    def __init__(self, client, provided_game=None):
+        if provided_game is None:
+            self.game = Game(DATABASE_FILE_NAME)
+        else:
+            self.game = provided_game
+
         self.commands = self.game.commands()
         self.slack_client = client
 
@@ -35,6 +39,9 @@ class MessagesHandler:
     def on_message(self, channel, from_slack_id, msg):
         try:
             split = msg.split(None, 1)
+            if len(split) is 0:
+                return
+
             command = split[0].lower()
 
             if len(split) == 2:
