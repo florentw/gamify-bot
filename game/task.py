@@ -46,17 +46,6 @@ class TaskRepository:
         uid, inserted, points, description = row
         return Task(description, points, inserted, uid)
 
-    def __str__(self):
-        pending = self.pending()
-        if len(pending) == 0:
-            return "No pending tasks."
-
-        out = "Opened tasks:\n"
-        for task in pending:
-            out += "-> " + str(task.uid) + ": " + str(task) + "\n"
-
-        return out
-
     def get(self, uid):
         cursor = self.con.cursor()
         cursor.execute("SELECT * FROM TASK WHERE id=?", (uid,))
@@ -93,3 +82,22 @@ class TaskRepository:
         cursor = self.con.cursor()
         cursor.execute("DELETE FROM TASK WHERE id=?", (uid,))
         self.con.commit()
+
+    def validate_task(self, argument):
+        task_id = self.check_task_id(argument)
+        if task_id is None:
+            return None, "invalid task id"
+
+        task = self.get(task_id)
+        if task is None:
+            return None, "this task does not exist."
+
+        return task, ""
+
+    @staticmethod
+    def check_task_id(argument):
+        try:
+            task_id = int(argument)
+            return task_id
+        except ValueError:
+            return None

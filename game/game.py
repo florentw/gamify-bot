@@ -2,13 +2,10 @@
 
 import collections
 import sqlite3
-from random import randint
 
 from assignment import AssignmentRepository
 from player import PlayerRepository, Player
 from task import Task, TaskRepository
-
-MAX_TASK_POINTS = 42
 
 
 class Game:
@@ -61,7 +58,7 @@ class Game:
         if player is None:
             return False, msg
 
-        (points, msg) = self.points_from(argument)
+        (points, msg) = self.players.points_from(argument)
         if points is None:
             return False, header + msg + ", usage: `!add &lt;points&gt; &lt;description&gt;`"
 
@@ -81,7 +78,7 @@ class Game:
         if player is None:
             return False, msg
 
-        (task, msg) = self.validate_task(argument)
+        (task, msg) = self.tasks.validate_task(argument)
         if task is None:
             return False, header + msg
 
@@ -94,7 +91,7 @@ class Game:
         if player is None:
             return False, msg
 
-        (task, msg) = self.validate_task(argument)
+        (task, msg) = self.tasks.validate_task(argument)
         if task is None:
             return False, msg
 
@@ -110,7 +107,7 @@ class Game:
         if player is None:
             return False, msg
 
-        (task, msg) = self.validate_task(argument)
+        (task, msg) = self.tasks.validate_task(argument)
         if task is None:
             return False, msg
 
@@ -211,31 +208,18 @@ class Game:
         if player is None:
             return False, msg
 
-        (task, msg) = self.validate_task(argument)
+        (task, msg) = self.tasks.validate_task(argument)
         if task is None:
             return False, msg
 
         if self.assignments.user_of_task(task.uid) is not None:
             return False, "a player is already assigned to this task."
 
-        # Preparing the weighted list of players (weights are the inverse of the high scores)
-        scores = self.players.scores()
-        total = sum(player.points for player in scores)
-        weighted_list = []
-        for player in scores:
-            if player.points is 0:
-                weight = 150  # Skew the distribution to assign more tasks to players with 0 points
-            else:
-                weight = 100 - int(((float(player.points)) / total) * 100)
+        assignee = self.players.pick_random_user()
 
-            weighted_list.append((weight, player))
-
-        # Random pick
-        player = self.weighted_random(weighted_list)
-
-        return self.assign_and_update_score(player.slack_id, task,
+        return self.assign_and_update_score(assignee.slack_id, task,
                                             ":game_die: *The universe has spoken, "
-                                            "congrats <@" + player.slack_id + ">!*\n")
+                                            "congrats <@" + assignee.slack_id + ">!*\n")
 
     def help(self, slack_id=None, argument=None):
         out = ":robot_face: *Commands*:\n"
@@ -272,31 +256,11 @@ class Game:
         message = self.ownership_message(player, task)
         return True, header + additional_msg + message
 
-    def validate_task(self, argument):
-        task_id = self.check_task_id(argument)
-        if task_id is None:
-            return None, "invalid task id"
-
-        task = self.tasks.get(task_id)
-        if task is None:
-            return None, "this task does not exist."
-
-        return task, ""
-
     @staticmethod
     def ownership_message(player, task):
         return "you are taking ownership of *" + task.description + "* for " + str(task.points) + \
                " point(s).\nYour new score is *" + str(player.points) + \
                "* point(s).\nIf you want to drop it, say: `!drop " + str(task.uid) + "`"
-
-    @staticmethod
-    def weighted_random(pairs):
-        total = sum(pair[0] for pair in pairs)
-        r = randint(1, total)
-        for (weight, value) in pairs:
-            r -= weight
-            if r <= 0:
-                return value
 
     @staticmethod
     def check_not_empty(argument):
@@ -306,33 +270,9 @@ class Game:
         return True
 
     @staticmethod
-    def check_task_id(argument):
-        try:
-            task_id = int(argument)
-            return task_id
-        except ValueError:
-            return None
-
-    @staticmethod
     def remove_trailing_quotes(description):
         if (description.startswith('"') and description.endswith('"')) or \
                 (description.startswith('\'') and description.endswith('\'')):
             description = description[1:-1]
 
         return description
-
-    @staticmethod
-    def points_from(argument):
-        try:
-            split = argument.split(None, 1)
-            if split is None or len(split) == 0:
-                return None, "invalid arguments"
-
-            points = int(split[0])
-            if points < 0 or points > MAX_TASK_POINTS:
-                return None, "points must be between 1 and " + str(MAX_TASK_POINTS) + " included"
-            else:
-                return points, ""
-
-        except ValueError:
-            return None, "invalid format for points"
