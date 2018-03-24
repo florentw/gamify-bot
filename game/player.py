@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+from random import randint
+
+MAX_TASK_POINTS = 42
 
 
 class Player:
@@ -95,3 +98,44 @@ class PlayerRepository:
             high_scores.append(Player(row[0], row[1], row[2]))
 
         return high_scores
+
+    @staticmethod
+    def points_from(argument):
+        try:
+            split = argument.split(None, 1)
+            if split is None or len(split) == 0:
+                return None, "invalid arguments"
+
+            points = int(split[0])
+            if points < 0 or points > MAX_TASK_POINTS:
+                return None, "points must be between 1 and " + str(MAX_TASK_POINTS) + " included"
+            else:
+                return points, ""
+
+        except ValueError:
+            return None, "invalid format for points"
+
+    def pick_random_user(self):
+        # Preparing the weighted list of players (weights are the inverse of the high scores)
+        scores = self.scores()
+        total = sum(player.points for player in scores)
+        weighted_list = []
+        for player in scores:
+            if player.points is 0:
+                weight = 150  # Skew the distribution to assign more tasks to players with 0 points
+            else:
+                weight = 100 - int(((float(player.points)) / total) * 100)
+
+            weighted_list.append((weight, player))
+
+        # Random pick
+        return self.weighted_random(weighted_list)
+
+    @staticmethod
+    def weighted_random(pairs):
+        total = sum(pair[0] for pair in pairs)
+        r = randint(1, total)
+        for (weight, value) in pairs:
+            r -= weight
+            if r <= 0:
+                return value
