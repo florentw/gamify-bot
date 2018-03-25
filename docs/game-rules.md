@@ -11,18 +11,19 @@ It is possible for a team member to **release ownership of a task** (dropping th
 
 ## Commands
 
-| Command                          | Description                                                                                   | Usage
-|----------------------------------|-----------------------------------------------------------------------------------------------|-----------------------------
-| [*!join*](#join_command)         | To **register your username** as a player in da game.                                         | `!join <user name>`
-| [*!leave*](#leave_command)       | To **leave the game**, your user and score will be deleted.                                   | `!leave`
-| [*!score*](#score_command)       | Will **print the high scores** tables.                                                        | `!score` or `!scores`
-| [*!tasks*](#tasks_command)       | Will **print the pending tasks**.                                                             | `!tasks`
-| [*!add*](#add_command)           | Will **add a new task** to the backlog to earn points, which can then be taken by a player.   | `!add <points> <description>`
-| [*!close*](#close_command)       | This **removes the task** from the backlog, no effect on scores.                              | `!close <task id>`
-| [*!take*](#take_command)         | You are **taking this task**, your score will increase by the amount of points of the task.   | `!take <task id>`
-| [*!drop*](#drop_command)         | You are **dropping this task**, your score will decrease by the amount of points of the task. | `!drop <task id>`
-| [*!roulette*](#roulette_command) | The **universe will assign** this task to someone (weighted random)!                          | `!roulette <task id>`
-| [*!help*](#help_command)         | Prints the **list of commands**.                                                              | `!help`
+| Command                                | Description                                                                                   | Usage
+|----------------------------------------|-----------------------------------------------------------------------------------------------|-----------------------------
+| [*!join*](#join_command)               | To **register your username** as a player in da game.                                         | `!join <user name>`
+| [*!leave*](#leave_command)             | To **leave the game**, your user and score will be deleted.                                   | `!leave`
+| [*!score*](#score_command)             | Will **print the high scores** tables.                                                        | `!score` or `!scores`
+| [*!tasks*](#tasks_command)             | Will **print the pending tasks**.                                                             | `!tasks`
+| [*!add*](#add_command)                 | Will **add a new task** to the backlog to earn points, which can then be taken by a player.   | `!add <points> <description>`
+| [*!close*](#close_command)             | This **removes the task** from the backlog, no effect on scores.                              | `!close <task id>`
+| [*!take*](#take_command)               | You are **taking this task**, your score will increase by the amount of points of the task.   | `!take <task id>`
+| [*!drop*](#drop_command)               | You are **dropping this task**, your score will decrease by the amount of points of the task. | `!drop <task id>`
+| [*!roulette*](#roulette_command)       | The **universe will assign** this task to someone (weighted random)!                          | `!roulette <task id>`
+| [*!help*](#help_command)               | Prints the **list of commands**.                                                              | `!help`
+| [*!admin:reset*](#admin_reset_command) | Resets everybody's score to 0. Cannot be reverted.                                            | `!admin!reset`
 
 ### <a name="join_command"></a> Register a username to join the game
 
@@ -109,3 +110,17 @@ Use the `!scores` command to get the high scores.
 
 ![Example: high scores](./img/gamify_scores.png "Example: high scores")
 
+### <a name="admin_reset_command"></a> Reset all player scores
+
+You may want to regularly reset all player scores to 0 (for instance at every sprint planning / retro).
+
+To do so, run the `!admin:reset` command, that can only be launched by an admin user,
+as declared in the configuration file `./bot-config.yml`:
+
+```yml
+# Declare a list of Slack IDs here that can perform admin commands.
+admin:
+  - "U1477E508"
+```
+
+**Warning**: Once you reset the scores, you cannot go back.

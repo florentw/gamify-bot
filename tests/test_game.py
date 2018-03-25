@@ -1,18 +1,34 @@
+# coding=utf-8
+
 from unittest import TestCase
 
 from game.game import Game
+
+TEST_ADMIN_LIST = ["U1"]
+
+
+class MockConf:
+
+    def __init__(self, admins):
+        self.admins = admins
+
+    def admin_list(self):
+        return self.admins
+
+    @staticmethod
+    def max_task_points():
+        return 42
 
 
 class TestGame(TestCase):
 
     def setUp(self):
-        self.game = Game(None, ":memory:")
+        self.game = Game(MockConf(TEST_ADMIN_LIST), ":memory:")
 
     def tearDown(self):
         self.game.close()
 
     def test_join_inserts_a_new_user(self):
-
         (inserted, msg) = self.game.join("U1", "User1")
 
         self.assert_success(inserted, msg, "you are now registered")
@@ -53,7 +69,7 @@ class TestGame(TestCase):
     def test_commands_returns_commands_dict(self):
         commands = self.game.commands()
 
-        self.assertEquals(len(commands), 11)
+        self.assertEquals(len(commands), 12)
         self.assertEquals(commands.get("!help")[1], "Prints the list of commands")
         self.assertEquals(commands.get("!help")[0], self.game.help)
         self.assertEquals(commands.get("!score"), commands.get("!scores"))
@@ -296,6 +312,30 @@ class TestGame(TestCase):
         for command, (function, description) in self.game.commands().items():
             self.assertTrue(command in help_output)
             self.assertTrue(description in help_output)
+
+    def test_reset_all_scores_returns_false_if_not_registered(self):
+        self.join_and_add_task()
+
+        (status, msg) = self.game.reset_all_scores("U2")
+
+        self.assert_have_to_register(msg, status)
+
+    def test_reset_all_scores_returns_false_if_not_admin(self):
+        self.game.join("U3", "User3")
+
+        (status, msg) = self.game.reset_all_scores("U3")
+
+        self.assertFalse(status)
+        self.assertTrue("this action can only be performed by an admin" in msg)
+
+    def test_reset_all_scores_returns_true_if_admin(self):
+        self.join_and_add_task()
+        self.game.take_task("U1", "1")
+
+        (status, msg) = self.game.reset_all_scores("U1")
+
+        self.assertTrue(status)
+        self.assertTrue("you successfully reset all player scores to 0" in msg)
 
     def assert_error(self, status, msg, expected_msg):
         self.assertFalse(status)

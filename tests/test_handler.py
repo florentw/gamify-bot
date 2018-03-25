@@ -1,3 +1,5 @@
+# coding=utf-8
+
 from unittest import TestCase
 
 from game.game import Game
@@ -28,7 +30,7 @@ class TestMessagesHandler(TestCase):
         self.game.close()
 
     def test_init_populates_command_list(self):
-        self.assertEquals(len(self.msg_handler.commands), 11)
+        self.assertEquals(len(self.msg_handler.commands), 12)
 
     def test_on_message_with_single_command(self):
         self.msg_handler.on_message("channel", "U1", "!tasks")

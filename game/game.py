@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# coding=utf-8
 
 import collections
 import sqlite3
@@ -50,6 +51,8 @@ class Game:
         c["!score"] = (self.list_high_scores, "Will print the high scores, `!score` or `!scores`")
         c["!scores"] = c["!score"]
         c["!tasks"] = (self.list_tasks, "Will print the opened tasks, `!tasks`")
+        c["!admin:reset"] = (self.list_tasks, "Will reset all scores to 0! Can only be performed by an admin, "
+                                              "`!admin:reset`")
         c["!help"] = (self.help, "Prints the list of commands")
         return c
 
@@ -167,6 +170,20 @@ class Game:
                    "* (<@" + player.slack_id + ">) with *" + str(player.points) + "* point(s)\n"
 
         return True, out
+
+    def reset_all_scores(self, slack_id, argument=None):
+        header = self.header(slack_id)
+
+        player, msg = self.check_registered(slack_id)
+        if player is None:
+            return False, msg
+
+        if not player.is_admin(self.config.admin_list()):
+            return False, header + "this action can only be performed by an admin."
+
+        # Reset all scores to 0
+        self.players.reset_points(0)
+        return "True", header + " you successfully reset all player scores to 0, hope you meant to do that ¯\_(ツ)_/¯"
 
     @staticmethod
     def place_for_score(place, player, previous_score):
