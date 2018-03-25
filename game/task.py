@@ -101,3 +101,23 @@ class TaskRepository:
             return task_id
         except ValueError:
             return None
+
+    @staticmethod
+    def points_from(argument, max_task_points=None):
+
+        if max_task_points is None:
+            max_task_points = 42
+
+        try:
+            split = argument.split(None, 1)
+            if split is None or len(split) == 0:
+                return None, "invalid arguments"
+
+            points = int(split[0])
+            if points < 0 or points > max_task_points:
+                return None, "points must be between 1 and " + str(max_task_points) + " included"
+            else:
+                return points, ""
+
+        except ValueError:
+            return None, "invalid format for points"

@@ -14,13 +14,13 @@ class SlackClientMock:
 
 
 def rtm_send_message_failure(channel, out):
-    raise ValueError
+    raise ValueError("Provoked error")
 
 
 class TestMessagesHandler(TestCase):
 
     def setUp(self):
-        self.game = Game(":memory:")
+        self.game = Game(None, ":memory:")
         self.client = SlackClientMock()
         self.msg_handler = MessagesHandler(self.client, self.game)
 

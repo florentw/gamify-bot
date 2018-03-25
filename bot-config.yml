@@ -1,0 +1,8 @@
+db:
+ file_name: "gamifybot.db"
+
+admin:
+  - "U1477E508"
+
+rules:
+  max_task_points: 42

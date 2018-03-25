@@ -6,7 +6,7 @@ from game.game import Game
 class TestGame(TestCase):
 
     def setUp(self):
-        self.game = Game(":memory:")
+        self.game = Game(None, ":memory:")
 
     def tearDown(self):
         self.game.close()

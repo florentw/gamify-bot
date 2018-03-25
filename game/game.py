@@ -16,8 +16,13 @@ class Game:
     and will earn an amount of points that was defined when adding it.
     """
 
-    def __init__(self, sqlite_database):
-        self.connection = sqlite3.connect(sqlite_database)
+    def __init__(self, config, sqlite_database=None):
+        if sqlite_database is not None:
+            self.connection = sqlite3.connect(sqlite_database)
+        else:
+            self.connection = sqlite3.connect(config.db_file_name())
+
+        self.config = config
         self.players = PlayerRepository(self.connection)
         self.tasks = TaskRepository(self.connection)
         self.assignments = AssignmentRepository(self.connection)
@@ -58,7 +63,11 @@ class Game:
         if player is None:
             return False, msg
 
-        (points, msg) = self.players.points_from(argument)
+        max_task_points = None
+        if self.config is not None:
+            max_task_points = self.config.max_task_points()
+
+        (points, msg) = self.tasks.points_from(argument, max_task_points)
         if points is None:
             return False, header + msg + ", usage: `!add &lt;points&gt; &lt;description&gt;`"
 

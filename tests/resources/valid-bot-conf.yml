@@ -1,0 +1,8 @@
+db:
+  file_name: "resources/valid.db"
+
+admin:
+  - "SLACK_USER"
+
+rules:
+  max_task_points: 1337
