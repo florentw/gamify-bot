@@ -1,8 +1,14 @@
+# The bot needs to be restarted after modifying this file.
+
+# SQLite 3 database file to persist the game data
 db:
  file_name: "gamifybot.db"
 
+# Declare a list of Slack IDs here to indicate users that can perform admin commands.
 admin:
-  - "U1477E508"
+  - "UXXXXXXXX"
+  - "UYYYYYYYY"
 
 rules:
+  # This is the maximum number of points that can be assigned at task creation (must be greater than 0).
   max_task_points: 42
