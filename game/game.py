@@ -51,8 +51,8 @@ class Game:
         c["!score"] = (self.list_high_scores, "Will print the high scores, `!score` or `!scores`")
         c["!scores"] = c["!score"]
         c["!tasks"] = (self.list_tasks, "Will print the opened tasks, `!tasks`")
-        c["!admin:reset"] = (self.list_tasks, "Will reset all scores to 0! Can only be performed by an admin, "
-                                              "`!admin:reset`")
+        c["!admin:reset"] = (self.reset_all_scores, "Will reset all scores to 0! Can only be performed by an admin, "
+                                                    "`!admin:reset`")
         c["!help"] = (self.help, "Prints the list of commands")
         return c
 
