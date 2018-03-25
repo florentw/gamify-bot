@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 from random import randint
 
-MAX_TASK_POINTS = 42
-
 
 class Player:
     def __init__(self, slack_id, name, points=0):
@@ -98,22 +96,6 @@ class PlayerRepository:
             high_scores.append(Player(row[0], row[1], row[2]))
 
         return high_scores
-
-    @staticmethod
-    def points_from(argument):
-        try:
-            split = argument.split(None, 1)
-            if split is None or len(split) == 0:
-                return None, "invalid arguments"
-
-            points = int(split[0])
-            if points < 0 or points > MAX_TASK_POINTS:
-                return None, "points must be between 1 and " + str(MAX_TASK_POINTS) + " included"
-            else:
-                return points, ""
-
-        except ValueError:
-            return None, "invalid format for points"
 
     def pick_random_user(self):
         # Preparing the weighted list of players (weights are the inverse of the high scores)

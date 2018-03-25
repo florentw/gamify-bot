@@ -5,17 +5,20 @@ import time
 
 from slackclient import SlackClient
 
-from game import Game
+from game import Game, Config
+
+ENV_BOT_TOKEN = 'SLACK_BOT_TOKEN'
 
 RTM_READ_DELAY = 1  # delay between readings from RTM
-DATABASE_FILE_NAME = "gamifybot.db"
 
 
 class MessagesHandler:
 
     def __init__(self, client, provided_game=None):
+
         if provided_game is None:
-            self.game = Game(DATABASE_FILE_NAME)
+            self.conf = Config()
+            self.game = Game(self.conf)
         else:
             self.game = provided_game
 
@@ -37,6 +40,7 @@ class MessagesHandler:
         self.slack_client.rtm_send_message(channel, out)
 
     def on_message(self, channel, from_slack_id, msg):
+        # noinspection PyBroadException
         try:
             split = msg.split(None, 1)
             if len(split) is 0:
@@ -67,7 +71,12 @@ def has_right_params(received_event):
 if __name__ == "__main__":
 
     # instantiate Slack client
-    slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
+    bot_token = os.environ.get(ENV_BOT_TOKEN)
+    if bot_token is None or bot_token.strip() is "":
+        print "Please set the environment variable: " + ENV_BOT_TOKEN
+        exit(1)
+
+    slack_client = SlackClient(bot_token)
 
     if slack_client.rtm_connect(with_team_state=False):
         print("GamifyBot connected and running!")
@@ -85,3 +94,4 @@ if __name__ == "__main__":
             time.sleep(RTM_READ_DELAY)
     else:
         print "Connection to Slack failed."
+        exit(1)

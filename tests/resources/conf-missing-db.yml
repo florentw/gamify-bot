@@ -1,0 +1,8 @@
+db:
+  hello: "world"
+
+admin:
+  - "SLACK_USER"
+
+rules:
+  max_task_points: 1337
