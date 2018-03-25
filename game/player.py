@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# coding=utf-8
+
 from random import randint
 
 
@@ -10,6 +12,9 @@ class Player:
 
     def __str__(self):
         return self.name + "(" + self.slack_id + "), " + str(self.points) + " point(s)"
+
+    def is_admin(self, admin_list):
+        return self.slack_id in admin_list
 
 
 class PlayerRepository:
@@ -71,6 +76,19 @@ class PlayerRepository:
         self.con.commit()
         return True
 
+    def reset_points(self, points, slack_id=None):
+        points = max(points, 0)
+        if slack_id is None:
+            self.set_points_for_all(points)
+            return True
+
+        player = self.get_by_id(slack_id)
+        if player is None:
+            return False
+
+        self.set_points_for(slack_id, points)
+        return True
+
     def update_points(self, slack_id, points_earned):
         player = self.get_by_id(slack_id)
         if player is None:
@@ -78,10 +96,18 @@ class PlayerRepository:
 
         player.points = max(player.points + points_earned, 0)
 
-        cursor = self.con.cursor()
-        cursor.execute("UPDATE PLAYER SET points=? WHERE id=?", (player.points, slack_id))
-        self.con.commit()
+        self.set_points_for(slack_id, player.points)
         return player
+
+    def set_points_for_all(self, points):
+        cursor = self.con.cursor()
+        cursor.execute("UPDATE PLAYER SET points=?", (points,))
+        self.con.commit()
+
+    def set_points_for(self, slack_id, points):
+        cursor = self.con.cursor()
+        cursor.execute("UPDATE PLAYER SET points=? WHERE id=?", (points, slack_id))
+        self.con.commit()
 
     def scores(self):
         cursor = self.con.cursor()

@@ -1,6 +1,9 @@
 #!/usr/bin/env python
+# coding=utf-8
 
 import time
+
+DEFAULT_MAX_TASK_POINTS = 42
 
 TASK_ASSIGNMENT_PERIOD = 900  # Assignment period: after this timeout, tasks will be automatically assigned to someone
 
@@ -21,7 +24,6 @@ class Task:
         return "Task[" + str(self.uid) + "] '" + self.description + "' inserted at " + str(self.timestamp)
 
     def has_expired(self):
-        # Expires after 15min
         return (time.time() - self.timestamp) > TASK_ASSIGNMENT_PERIOD
 
 
@@ -106,7 +108,7 @@ class TaskRepository:
     def points_from(argument, max_task_points=None):
 
         if max_task_points is None:
-            max_task_points = 42
+            max_task_points = DEFAULT_MAX_TASK_POINTS
 
         try:
             split = argument.split(None, 1)

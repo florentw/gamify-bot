@@ -104,3 +104,29 @@ class TestPlayerRepository(TestCase):
         scores = self.players.scores()
 
         self.assertEquals(len(scores), 0)
+
+    def test_reset_points_for_given_user_updates_table(self):
+        self.players.add(PLAYER_1)
+        self.players.update_points(SLACK_ID_1, 1000)
+
+        reset = self.players.reset_points(3, SLACK_ID_1)
+
+        self.assertTrue(reset)
+        player = self.players.get_by_id(SLACK_ID_1)
+        self.assertEquals(player.points, 3)
+
+    def test_reset_points_for_unknown_user_returns_false(self):
+        self.players.add(PLAYER_1)
+
+        reset = self.players.reset_points(3, "unknown")
+        self.assertFalse(reset)
+
+    def test_reset_points_for_all_users_updates_all(self):
+        self.players.add(PLAYER_1)
+        self.players.add(Player("U2", "user2"))
+
+        reset = self.players.reset_points(3)
+
+        self.assertTrue(reset)
+        self.assertEquals(self.players.get_by_id(SLACK_ID_1).points, 3)
+        self.assertEquals(self.players.get_by_id("U2").points, 3)
