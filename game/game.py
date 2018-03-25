@@ -8,6 +8,8 @@ from assignment import AssignmentRepository
 from player import PlayerRepository, Player
 from task import Task, TaskRepository
 
+VERSION = "v0.3"
+
 
 class Game:
     """
@@ -253,7 +255,7 @@ class Game:
         for command, (function, description) in self.commands_dict.items():
             out += "> *" + command + "*: " + description + "\n"
 
-        out += "\n_ GamifyBot v0.2 - github.com/florentw/gamify-bot _\n"
+        out += "\n_ GamifyBot %s - github.com/florentw/gamify-bot _\n" % VERSION
         return True, out
 
     def check_registered(self, slack_id):

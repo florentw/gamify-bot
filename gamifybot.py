@@ -56,7 +56,7 @@ class MessagesHandler:
             self.handle_bot_command(command, argument, channel, from_slack_id)
         except Exception:
             import traceback
-            print "Exception occurred while handling message: '" + msg + "'"
+            print("Exception occurred while handling message: '" + msg + "'")
             traceback.print_exc()
 
 
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     # instantiate Slack client
     bot_token = os.environ.get(ENV_BOT_TOKEN)
     if bot_token is None or bot_token.strip() is "":
-        print "Please set the environment variable: " + ENV_BOT_TOKEN
+        print("Please set the environment variable: " + ENV_BOT_TOKEN)
         exit(1)
 
     slack_client = SlackClient(bot_token)
@@ -89,9 +89,9 @@ if __name__ == "__main__":
                 if is_message(event) and has_right_params(event):
                     handler.on_message(event["channel"], event["user"], event["text"])
                 else:
-                    print "Received event " + str(event)
+                    print("Received event " + str(event))
 
             time.sleep(RTM_READ_DELAY)
     else:
-        print "Connection to Slack failed."
+        print("Connection to Slack failed.")
         exit(1)
