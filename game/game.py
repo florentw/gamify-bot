@@ -77,7 +77,7 @@ class Game:
             return False, header + msg + ", usage: `!add &lt;points&gt; &lt;description&gt;`"
 
         if len(argument.split(None, 1)) == 2:
-            description = self.remove_trailing_quotes(argument.split(None, 1)[1])
+            description = self.tasks.remove_trailing_quotes(argument.split(None, 1)[1])
         else:
             return False, header + "invalid arguments: `!add &lt;points&gt; &lt;description&gt;`"
 
@@ -296,11 +296,3 @@ class Game:
             return False
 
         return True
-
-    @staticmethod
-    def remove_trailing_quotes(description):
-        if (description.startswith('"') and description.endswith('"')) or \
-                (description.startswith('\'') and description.endswith('\'')):
-            description = description[1:-1]
-
-        return description

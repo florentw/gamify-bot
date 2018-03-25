@@ -123,3 +123,11 @@ class TaskRepository:
 
         except ValueError:
             return None, "invalid format for points"
+
+    @staticmethod
+    def remove_trailing_quotes(description):
+        if (description.startswith('"') and description.endswith('"')) or \
+                (description.startswith('\'') and description.endswith('\'')):
+            description = description[1:-1]
+
+        return description

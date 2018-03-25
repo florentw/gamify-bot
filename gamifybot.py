@@ -78,20 +78,17 @@ if __name__ == "__main__":
 
     slack_client = SlackClient(bot_token)
 
-    if slack_client.rtm_connect(with_team_state=False):
-        print("GamifyBot connected and running!")
-
-        handler = MessagesHandler(slack_client)
-        while True:
-            events = slack_client.rtm_read()
-
-            for event in events:
-                if is_message(event) and has_right_params(event):
-                    handler.on_message(event["channel"], event["user"], event["text"])
-                else:
-                    print("Received event " + str(event))
-
-            time.sleep(RTM_READ_DELAY)
-    else:
+    if not slack_client.rtm_connect(with_team_state=False):
         print("Connection to Slack failed.")
         exit(1)
+
+    print("GamifyBot connected and running!")
+    handler = MessagesHandler(slack_client)
+    while True:
+        events = slack_client.rtm_read()
+
+        for event in events:
+            if is_message(event) and has_right_params(event):
+                handler.on_message(event["channel"], event["user"], event["text"])
+
+        time.sleep(RTM_READ_DELAY)
