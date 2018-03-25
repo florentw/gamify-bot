@@ -23,7 +23,7 @@ It is possible for a team member to **release ownership of a task** (dropping th
 | [*!drop*](#drop_command)               | You are **dropping this task**, your score will decrease by the amount of points of the task. | `!drop <task id>`
 | [*!roulette*](#roulette_command)       | The **universe will assign** this task to someone (weighted random)!                          | `!roulette <task id>`
 | [*!help*](#help_command)               | Prints the **list of commands**.                                                              | `!help`
-| [*!admin:reset*](#admin_reset_command) | Resets everybody's score to 0. Cannot be reverted.                                            | `!admin!reset`
+| [*!admin:reset*](#admin_reset_command) | **Resets everybody's score to 0**. Cannot be reverted.                                            | `!admin!reset`
 
 ### <a name="join_command"></a> Register a username to join the game
 
@@ -112,7 +112,7 @@ Use the `!scores` command to get the high scores.
 
 ### <a name="admin_reset_command"></a> Reset all player scores
 
-You may want to regularly reset all player scores to 0 (for instance at every sprint planning / retro).
+You may want to regularly **reset all player scores to 0** (for instance at every sprint planning / retro).
 
 To do so, run the `!admin:reset` command, that can only be launched by an admin user,
 as declared in the configuration file `./bot-config.yml`:
