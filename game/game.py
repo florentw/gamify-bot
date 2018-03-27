@@ -125,14 +125,22 @@ class Game:
         if task is None:
             return False, msg
 
-        assignee = self.assignments.user_of_task(task.uid)
-        if assignee != player.slack_id:
-            return False, header + "you are not assigned to this task."
+        cause = ""
+        assignee_id = self.assignments.user_of_task(task.uid)
+        if assignee_id is None:
+            return False, header + "no one is assigned to this task."
+
+        header = self.header(assignee_id)
+        if not player.is_admin(self.config.admin_list()):
+            if assignee_id != player.slack_id:
+                return False, header + "you are not assigned to this task."
+        else:
+            cause = "\nAdmin player <@" + slack_id + "> cancelled your assignment."
 
         self.assignments.remove(task.uid)
         player = self.players.update_points(slack_id, -task.points)
         return True, header + "you are not assigned to this task anymore, " \
-                              "your new score is *" + str(player.points) + "* point(s)."
+                              "your new score is *" + str(player.points) + "* point(s)." + cause
 
     def list_tasks(self, slack_id=None, argument=None):
         pending = self.tasks.pending()

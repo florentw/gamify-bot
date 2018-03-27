@@ -118,8 +118,8 @@ class TaskRepository:
             points = int(split[0])
             if points < 0 or points > max_task_points:
                 return None, "points must be between 1 and " + str(max_task_points) + " included"
-            else:
-                return points, ""
+
+            return points, ""
 
         except ValueError:
             return None, "invalid format for points"
