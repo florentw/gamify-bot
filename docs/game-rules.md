@@ -79,6 +79,9 @@ You need to pass the following argument to the command:
 
 ![Example: dropping a task](./img/gamify_drop.png "Example: dropping a task")
 
+**Note**: If you are an **admin player** (as declared in the configuration file `./bot-config.yml`),
+ you can cancel a task assignment on behalf of another player.
+
 ### <a name="roulette_command"></a> Roulette: let the universe decide!
 
 Use the `!roulette` command to automatically assign the task to one of the team members.
