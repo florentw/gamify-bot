@@ -67,6 +67,19 @@ class TestGame(TestCase):
 
         self.assert_success(removed, msg, "you are now unregistered")
 
+    def test_leave_removes_player_assignments(self):
+        self.join_and_add_task()
+        self.game.take_task(USER_ID, TASK_ID)
+        self.game.join(USER_ID2, USER_NAME2)
+        self.game.add_task(USER_ID2, "1 Another task")
+        self.game.take_task(USER_ID2, TASK_ID2)
+
+        (removed, msg) = self.game.leave(USER_ID)
+
+        self.assertTrue(removed)
+        self.assertEquals(len(self.game.assignments.list()), 1)
+        self.assertEquals(self.game.assignments.list().get(2), USER_ID2)
+
     def test_leave_returns_false_for_unknown_player(self):
         (removed, msg) = self.game.leave(USER_ID)
 

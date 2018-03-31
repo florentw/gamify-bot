@@ -5,16 +5,16 @@ from random import randint
 
 
 class Player:
-    def __init__(self, slack_id, name, points=0):
-        self.slack_id = slack_id
+    def __init__(self, player_id, name, points=0):
+        self.player_id = player_id
         self.name = name
         self.points = points
 
     def __str__(self):
-        return self.name + "(" + self.slack_id + "), " + str(self.points) + " point(s)"
+        return self.name + "(" + self.player_id + "), " + str(self.points) + " point(s)"
 
     def is_admin(self, admin_list):
-        return self.slack_id in admin_list
+        return self.player_id in admin_list
 
 
 class PlayerRepository:
@@ -34,12 +34,12 @@ class PlayerRepository:
 
     @staticmethod
     def player_from_row(row):
-        slack_id, name, points = row
-        return Player(slack_id, name, points)
+        player_id, name, points = row
+        return Player(player_id, name, points)
 
-    def get_by_id(self, slack_id):
+    def get_by_id(self, player_id):
         cursor = self.con.cursor()
-        cursor.execute("SELECT * FROM PLAYER WHERE id=?", (slack_id,))
+        cursor.execute("SELECT * FROM PLAYER WHERE id=?", (player_id,))
         row = cursor.fetchone()
 
         if row is None:
@@ -58,45 +58,45 @@ class PlayerRepository:
         return self.player_from_row(row)
 
     def add(self, player):
-        if self.get_by_id(player.slack_id) is not None:
+        if self.get_by_id(player.player_id) is not None:
             return False
 
         cursor = self.con.cursor()
         cursor.execute("INSERT INTO PLAYER(id, name, points) VALUES (?,?,?)",
-                       (player.slack_id, player.name, player.points))
+                       (player.player_id, player.name, player.points))
         self.con.commit()
         return True
 
-    def remove(self, slack_id):
-        if self.get_by_id(slack_id) is None:
+    def remove(self, player_id):
+        if self.get_by_id(player_id) is None:
             return False
 
         cursor = self.con.cursor()
-        cursor.execute("DELETE FROM PLAYER WHERE id=?", (slack_id,))
+        cursor.execute("DELETE FROM PLAYER WHERE id=?", (player_id,))
         self.con.commit()
         return True
 
-    def reset_points(self, points, slack_id=None):
+    def reset_points(self, points, player_id=None):
         points = max(points, 0)
-        if slack_id is None:
+        if player_id is None:
             self.set_points_for_all(points)
             return True
 
-        player = self.get_by_id(slack_id)
+        player = self.get_by_id(player_id)
         if player is None:
             return False
 
-        self.set_points_for(slack_id, points)
+        self.set_points_for(player_id, points)
         return True
 
-    def update_points(self, slack_id, points_earned):
-        player = self.get_by_id(slack_id)
+    def update_points(self, player_id, points_earned):
+        player = self.get_by_id(player_id)
         if player is None:
             return None
 
         player.points = max(player.points + points_earned, 0)
 
-        self.set_points_for(slack_id, player.points)
+        self.set_points_for(player_id, player.points)
         return player
 
     def set_points_for_all(self, points):
@@ -104,9 +104,9 @@ class PlayerRepository:
         cursor.execute("UPDATE PLAYER SET points=?", (points,))
         self.con.commit()
 
-    def set_points_for(self, slack_id, points):
+    def set_points_for(self, player_id, points):
         cursor = self.con.cursor()
-        cursor.execute("UPDATE PLAYER SET points=? WHERE id=?", (points, slack_id))
+        cursor.execute("UPDATE PLAYER SET points=? WHERE id=?", (points, player_id))
         self.con.commit()
 
     def scores(self):

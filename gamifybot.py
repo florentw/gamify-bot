@@ -25,7 +25,7 @@ class MessagesHandler:
         self.commands = self.game.commands()
         self.slack_client = client
 
-    def handle_bot_command(self, command, argument, channel, slack_id):
+    def handle_bot_command(self, command, argument, channel, player_id):
         # Here we pass the arguments from the current method to the registered function in the commands dict
         args = locals()
         del args["self"]
@@ -39,7 +39,7 @@ class MessagesHandler:
         (status, out) = command_func(**args)
         self.slack_client.rtm_send_message(channel, out)
 
-    def on_message(self, channel, from_slack_id, msg):
+    def on_message(self, channel, from_player_id, msg):
         # noinspection PyBroadException
         try:
             split = msg.split(None, 1)
@@ -53,7 +53,7 @@ class MessagesHandler:
             else:
                 argument = ""
 
-            self.handle_bot_command(command, argument, channel, from_slack_id)
+            self.handle_bot_command(command, argument, channel, from_player_id)
         except Exception:
             import traceback
             print("Exception occurred while handling message: '" + msg + "'")
