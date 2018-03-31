@@ -35,7 +35,7 @@ Use the `!join` command to register a username that will be linked to you Slack 
 
 ### <a name="leave_command"></a> Leave the game
 
-Use the `!leave` command to delete your user from the game (your score is also lost in the process).
+Use the `!leave` command to delete your user from the game and all your task assignments (your score is also lost in the process).
 
 `!leave`
 
