@@ -1,4 +1,19 @@
 #!/usr/bin/env python
+# coding=utf-8
+
+"""
+GamifyBot main entry point, this file will run with python 2.7, and takes no arguments.
+Please refer to the README.md for details.
+
+This file contains a handler that forwards Slack events as commands for the game engine.
+"""
+
+__license__ = "MIT"
+__author__ = "Florent Weber"
+__maintainer__ = __author__
+__email__ = "florent.weber@gmail.com"
+__status__ = "Production"
+__version__ = "0.3"
 
 import os
 import time
@@ -26,6 +41,16 @@ class MessagesHandler:
         self.slack_client = client
 
     def handle_bot_command(self, command, argument, channel, player_id):
+        """
+        Forwards commands to the game engine using a commands dict for the mapping.
+
+        :param command: The first word of the intercepted message.
+        :param argument: A string containing the rest of the intercepted message.
+        :param channel: Channel id from witch the message was received.
+        :param player_id: Id of the player that emitted the message.
+        :return: void
+        """
+
         # Here we pass the arguments from the current method to the registered function in the commands dict
         args = locals()
         del args["self"]
@@ -40,6 +65,15 @@ class MessagesHandler:
         self.slack_client.rtm_send_message(channel, out)
 
     def on_message(self, channel, from_player_id, msg):
+        """
+        Parses a message, to validate its format and extract a command + arguments from it.
+
+        :param channel: Channel id from witch the message was received.
+        :param from_player_id: Id of the player that emitted the message.
+        :param msg: Received message contents.
+        :return: void
+        """
+
         # noinspection PyBroadException
         try:
             split = msg.split(None, 1)
@@ -72,7 +106,7 @@ if __name__ == "__main__":
 
     # instantiate Slack client
     bot_token = os.environ.get(ENV_BOT_TOKEN)
-    if bot_token is None or bot_token.strip() is "":
+    if bot_token is None or bot_token.strip() == "":
         print("Please set the environment variable: " + ENV_BOT_TOKEN)
         exit(1)
 
@@ -82,7 +116,8 @@ if __name__ == "__main__":
         print("Connection to Slack failed.")
         exit(1)
 
-    print("GamifyBot connected and running!")
+    print("GamifyBot v" + __version__ + " connected and running!")
+
     handler = MessagesHandler(slack_client)
     while True:
         events = slack_client.rtm_read()
