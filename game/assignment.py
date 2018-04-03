@@ -71,6 +71,11 @@ class AssignmentRepository:
     def upgrade_from_0_to_1(con):
         cursor = con.cursor()
 
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='ASSIGNMENT'")
+        row = cursor.fetchone()
+        if row is None:
+            return
+
         cursor.execute("ALTER TABLE ASSIGNMENT RENAME TO TMP_ASSIGNMENT")
         AssignmentRepository.create_assignment_table(cursor)
         cursor.execute("INSERT INTO ASSIGNMENT(task_id, player_id) SELECT task_id, slack_id FROM TMP_ASSIGNMENT")

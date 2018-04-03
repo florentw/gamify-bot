@@ -107,3 +107,10 @@ class TestAssignmentRepository(TestCase):
         # Will throw if player_id column not present
         # OperationalError: no such column: player_id
         cursor.execute("SELECT player_id FROM ASSIGNMENT")
+
+    def test_upgrade_from_does_not_throw_if_assignment_table_not_here(self):
+        cursor = self.con.cursor()
+        cursor.execute("DROP TABLE ASSIGNMENT")
+        self.con.commit()
+
+        self.repo.upgrade_from_0_to_1(self.con)
