@@ -13,7 +13,7 @@ __author__ = "Florent Weber"
 __maintainer__ = __author__
 __email__ = "florent.weber@gmail.com"
 __status__ = "Production"
-__version__ = "0.3"
+__version__ = "${GAMIFY_BOT_VERSION}"
 
 import os
 import time

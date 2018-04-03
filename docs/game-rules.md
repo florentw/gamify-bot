@@ -1,3 +1,5 @@
+[//]: # "Documentation generated for version ${GAMIFY_BOT_VERSION}"
+
 
 ## The game
 
