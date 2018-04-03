@@ -94,3 +94,16 @@ class TestAssignmentRepository(TestCase):
         self.assertEquals(out, "Current assignments:\n"
                                "-> 1337 is assigned to user\n"
                                "-> 1334 is assigned to other\n")
+
+    def test_upgrade_from_0_to_1_renames_player_id_column(self):
+        cursor = self.con.cursor()
+        cursor.execute("DROP TABLE ASSIGNMENT")
+        cursor.execute("CREATE TABLE IF NOT EXISTS ASSIGNMENT "
+                       "(task_id INTEGER NOT NULL UNIQUE, slack_id TEXT NOT NULL, UNIQUE(task_id, slack_id))")
+        self.con.commit()
+
+        self.repo.upgrade_from_0_to_1(self.con)
+
+        # Will throw if player_id column not present
+        # OperationalError: no such column: player_id
+        cursor.execute("SELECT player_id FROM ASSIGNMENT")

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+from assignment import AssignmentRepository
 from game import __version__
 
 NO_VERSION = "0.0"
@@ -16,12 +17,18 @@ class Upgrade:
         if upgrade_procedures is not None:
             self.upgrade_procedures = upgrade_procedures
         else:
+            # List each upgrade method from one major to another in this list
             self.upgrade_procedures = [self.upgrade_from_0_to_1]
 
-    # Put the upgrade methods in this section, there must be one method per upgrade from a major to another.
+    ################################################################
+    # Put the upgrade methods in this section,
+    # there must be one method per upgrade from a major to another.
+    ################################################################
+
     def upgrade_from_0_to_1(self):
-        print "upgrade_from_0_to_1"
-        # AssignmentRepository.upgrade_from_0_to_1(self.con)
+        AssignmentRepository.upgrade_from_0_to_1(self.con)
+
+    ################################################################
 
     def detect_initial_state(self, target_version=__version__):
         self.previous_version = self.select_or_insert_version(target_version)
@@ -62,7 +69,7 @@ class Upgrade:
 
         # No need to upgrade
         if major_from == major_to:
-            return True, ""
+            return True, "Data model is up to date."
 
         if major_from > major_to:
             return False, "Trying to downgrade the data model " \
@@ -76,7 +83,7 @@ class Upgrade:
                        (target_version,))
         self.con.commit()
 
-        return True, ""
+        return True, "Successfully upgraded from " + self.previous_version + " to " + target_version + "."
 
     @staticmethod
     def major_from(version):
