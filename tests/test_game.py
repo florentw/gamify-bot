@@ -1,5 +1,5 @@
 # coding=utf-8
-
+import sqlite3
 from unittest import TestCase
 
 from game.game import Game
@@ -29,10 +29,24 @@ class MockConf:
 class TestGame(TestCase):
 
     def setUp(self):
-        self.game = Game(MockConf(TEST_ADMIN_LIST), ":memory:")
+        self.game = Game(MockConf(TEST_ADMIN_LIST), sqlite3.connect(":memory:"))
 
     def tearDown(self):
         self.game.close()
+
+    def test_init_throws_error_if_data_model_upgrade_fails(self):
+        connection = sqlite3.connect(":memory:")
+        cursor = connection.cursor()
+        cursor.execute("CREATE TABLE VERSION(version TEXT)")
+        cursor.execute("INSERT INTO VERSION(version) VALUES ('99.0')")
+
+        failed = False
+        try:
+            Game(MockConf(TEST_ADMIN_LIST), connection)
+        except ValueError:
+            failed = True
+
+        self.assertTrue(failed)
 
     def test_join_inserts_a_new_user(self):
         (inserted, msg) = self.game.join(USER_ID, USER_NAME)
