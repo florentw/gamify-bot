@@ -48,10 +48,15 @@ class TestGame(TestCase):
 
         self.assert_error(inserted, msg, "you are already registered")
 
-    def test_join_with_invalid_username_returns_false(self):
+    def test_join_with_empty_username_returns_false(self):
         (inserted, msg) = self.game.join(USER_ID, "")
 
-        self.assert_error(inserted, msg, "you have to provide a valid user name")
+        self.assert_error(inserted, msg, "you have to provide a user name")
+
+    def test_join_with_invalid_username_returns_false(self):
+        (inserted, msg) = self.game.join(USER_ID, "invalid name")
+
+        self.assert_error(inserted, msg, "User names can only contain alphanumeric and special characters")
 
     def test_join_with_same_name_as_another_player_returns_false(self):
         self.game.join(USER_ID, USER_NAME)

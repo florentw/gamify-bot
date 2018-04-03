@@ -130,3 +130,25 @@ class TestPlayerRepository(TestCase):
         self.assertTrue(reset)
         self.assertEquals(self.players.get_by_id(PLAYER_ID_1).points, 3)
         self.assertEquals(self.players.get_by_id("U2").points, 3)
+
+    def test_validate_name_format_returns_false_when_too_short(self):
+        valid = self.players.validate_name_format("a")
+
+        self.assertFalse(valid)
+
+    def test_validate_name_format_returns_false_when_too_long(self):
+        long_name = 'a'.join("" for _ in xrange(34))
+
+        valid = self.players.validate_name_format(long_name)
+
+        self.assertFalse(valid)
+
+    def test_validate_name_format_returns_false_when_invalid(self):
+        valid = self.players.validate_name_format("no valid")
+
+        self.assertFalse(valid)
+
+    def test_validate_name_format_returns_true_when_valid(self):
+        valid = self.players.validate_name_format("hey-hello_Ok1")
+
+        self.assertTrue(valid)
