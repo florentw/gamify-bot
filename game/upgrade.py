@@ -87,4 +87,8 @@ class Upgrade:
 
     @staticmethod
     def major_from(version):
+
+        if version == "${" + "GAMIFY_BOT_VERSION" + "}":
+            return 0.0  # This is a development version
+
         return int(float(version))
