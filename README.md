@@ -1,3 +1,6 @@
+[//]: # "Documentation generated for version ${GAMIFY_BOT_VERSION}"
+
+
 # Gamify Bot
 
 [![Build status](https://travis-ci.org/florentw/gamify-bot.svg?branch=master)](https://travis-ci.org/florentw/gamify-bot)
