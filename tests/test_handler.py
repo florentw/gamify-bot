@@ -1,5 +1,5 @@
 # coding=utf-8
-
+import sqlite3
 from unittest import TestCase
 
 from game.game import Game
@@ -22,7 +22,7 @@ def rtm_send_message_failure(channel, out):
 class TestMessagesHandler(TestCase):
 
     def setUp(self):
-        self.game = Game(None, ":memory:")
+        self.game = Game(None, sqlite3.connect(":memory:"))
         self.client = SlackClientMock()
         self.msg_handler = MessagesHandler(self.client, self.game)
 

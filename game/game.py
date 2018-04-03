@@ -20,6 +20,7 @@ import sqlite3
 from assignment import AssignmentRepository
 from player import PlayerRepository, Player
 from task import Task, TaskRepository
+from upgrade import Upgrade
 
 
 class Game:
@@ -30,17 +31,26 @@ class Game:
     and will earn an amount of points that was defined when adding it.
     """
 
-    def __init__(self, config, sqlite_database=None):
-        if sqlite_database is not None:
-            self.connection = sqlite3.connect(sqlite_database)
+    def __init__(self, config, sqlite_con=None):
+        if sqlite_con is not None:
+            self.connection = sqlite_con
         else:
             self.connection = sqlite3.connect(config.db_file_name())
+
+        self.perform_upgrade()
 
         self.config = config
         self.players = PlayerRepository(self.connection)
         self.tasks = TaskRepository(self.connection)
         self.assignments = AssignmentRepository(self.connection)
         self.commands_dict = self.commands()
+
+    def perform_upgrade(self):
+        upgrade = Upgrade(self.connection)
+        upgrade.detect_initial_state()
+        (status, msg) = upgrade.perform_upgrade()
+        if status is False:
+            raise ValueError("Error while performing data model upgrade: " + msg)
 
     def commands(self):
         """
