@@ -42,7 +42,7 @@ class TestUpgrade(TestCase):
         (status, msg) = self.upgrade.perform_upgrade(CURRENT_VERSION)
 
         self.assertTrue(status)
-        self.assertEquals(msg, "")
+        self.assertEquals(msg, "Data model is up to date.")
 
     def test_perform_upgrade_returns_false_if_downgrade(self):
         self.upgrade.select_or_insert_version(CURRENT_VERSION)
@@ -59,7 +59,7 @@ class TestUpgrade(TestCase):
         (status, msg) = self.upgrade.perform_upgrade("2.0")
 
         self.assertTrue(status)
-        self.assertEquals(msg, "")
+        self.assertEquals(msg, "Successfully upgraded from 0.0 to 2.0.")
         detected_version = self.upgrade.fetch_data_model_version()
         self.assertEquals(detected_version, "2.0")
         self.assertTrue(self.called_1)

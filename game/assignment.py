@@ -13,8 +13,7 @@ class AssignmentRepository:
         self.con = connection
 
         cursor = self.con.cursor()
-        cursor.execute("CREATE TABLE IF NOT EXISTS ASSIGNMENT "
-                       "(task_id INTEGER NOT NULL UNIQUE, slack_id TEXT NOT NULL, UNIQUE(task_id, slack_id))")
+        self.create_assignment_table(cursor)
         self.con.commit()
 
     def __str__(self):
@@ -23,16 +22,16 @@ class AssignmentRepository:
             return "No assignments."
 
         out = "Current assignments:\n"
-        for task_id, slack_id in assignments.items():
-            out += "-> " + str(task_id) + " is assigned to " + slack_id + "\n"
+        for task_id, player_id in assignments.items():
+            out += "-> " + str(task_id) + " is assigned to " + player_id + "\n"
 
         return out
 
-    def assign(self, task_id, slack_id):
+    def assign(self, task_id, player_id):
         cursor = self.con.cursor()
         try:
-            cursor.execute("INSERT INTO ASSIGNMENT(task_id, slack_id) VALUES (?,?)",
-                           (task_id, slack_id))
+            cursor.execute("INSERT INTO ASSIGNMENT(task_id, player_id) VALUES (?,?)",
+                           (task_id, player_id))
         except sqlite3.IntegrityError:
             return False
 
@@ -45,7 +44,7 @@ class AssignmentRepository:
 
     def user_of_task(self, task_id):
         cursor = self.con.cursor()
-        cursor.execute("SELECT slack_id FROM ASSIGNMENT WHERE task_id=?", (task_id,))
+        cursor.execute("SELECT player_id FROM ASSIGNMENT WHERE task_id=?", (task_id,))
         row = cursor.fetchone()
 
         if row is None:
@@ -55,7 +54,7 @@ class AssignmentRepository:
 
     def list(self):
         cursor = self.con.cursor()
-        cursor.execute("SELECT task_id, slack_id FROM ASSIGNMENT")
+        cursor.execute("SELECT task_id, player_id FROM ASSIGNMENT")
 
         assign_dict = {}
         while True:
@@ -63,7 +62,23 @@ class AssignmentRepository:
             if row is None:
                 break
 
-            task_id, slack_id = row
-            assign_dict[task_id] = slack_id
+            task_id, player_id = row
+            assign_dict[task_id] = player_id
 
         return assign_dict
+
+    @staticmethod
+    def upgrade_from_0_to_1(con):
+        cursor = con.cursor()
+
+        cursor.execute("ALTER TABLE ASSIGNMENT RENAME TO TMP_ASSIGNMENT")
+        AssignmentRepository.create_assignment_table(cursor)
+        cursor.execute("INSERT INTO ASSIGNMENT(task_id, player_id) SELECT task_id, slack_id FROM TMP_ASSIGNMENT")
+        cursor.execute("DROP TABLE TMP_ASSIGNMENT")
+
+        con.commit()
+
+    @staticmethod
+    def create_assignment_table(cursor):
+        cursor.execute("CREATE TABLE IF NOT EXISTS ASSIGNMENT "
+                       "(task_id INTEGER NOT NULL UNIQUE, player_id TEXT NOT NULL, UNIQUE(task_id, player_id))")
