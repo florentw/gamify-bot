@@ -1,7 +1,13 @@
 #!/usr/bin/env python
 # coding=utf-8
-
+import re
 from random import randint
+
+MIN_USER_NAME_LEN = 2
+
+MAX_USER_NAME_LEN = 32
+
+VALID_NAME_REGEX = "^[a-zA-Z0-9]+([_-]?[a-zA-Z0-9])*$"
 
 
 class Player:
@@ -147,3 +153,24 @@ class PlayerRepository:
             r -= weight
             if r <= 0:
                 return value
+
+    @staticmethod
+    def validate_name_format(name):
+
+        if len(name) < MIN_USER_NAME_LEN or len(name) > MAX_USER_NAME_LEN:
+            return False
+
+        valid_name_pattern = re.compile(VALID_NAME_REGEX)
+        if valid_name_pattern.match(name) is not None:
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def invalid_name_message():
+
+        return "User names can only contain alphanumeric and special characters: '_','-'." \
+               "It always has to start with an alphanumeric character.\n" \
+               "Special characters have to be followed by an alphanumeric character.\n" \
+               "The last character has to be an alphanumeric character.\n" \
+               "It must be between " + str(MIN_USER_NAME_LEN) + " and " + str(MAX_USER_NAME_LEN) + " characters long."

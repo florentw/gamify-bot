@@ -84,7 +84,10 @@ class Game:
         header = self.header(player_id)
 
         if self.check_not_empty(argument) is False:
-            return False, header + "you have to provide a valid user name: `!join &lt;user name&gt;`"
+            return False, header + "you have to provide a user name: `!join &lt;user name&gt;`"
+
+        if self.players.validate_name_format(argument) is False:
+            return False, header + self.players.invalid_name_message()
 
         if self.players.get_by_id(player_id) is not None:
             return False, header + "you are already registered"
