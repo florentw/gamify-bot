@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-from assignment import AssignmentRepository
-from game import __version__
+from __future__ import absolute_import
+from .assignment import AssignmentRepository
+from .game import __version__
 
 NO_VERSION = "0.0"
 

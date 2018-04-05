@@ -6,6 +6,7 @@ Main logic and game rules:
 - User handling logic
 - Tasks and assignments implementation
 """
+from __future__ import absolute_import
 
 __license__ = "MIT"
 __author__ = "Florent Weber"
@@ -17,10 +18,10 @@ __version__ = "${GAMIFY_BOT_VERSION}"
 import collections
 import sqlite3
 
-from assignment import AssignmentRepository
-from player import PlayerRepository, Player
-from task import Task, TaskRepository
-from upgrade import Upgrade
+from .assignment import AssignmentRepository
+from .player import PlayerRepository, Player
+from .task import Task, TaskRepository
+from .upgrade import Upgrade
 
 
 class Game:
