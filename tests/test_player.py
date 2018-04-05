@@ -1,3 +1,4 @@
+from builtins import range
 import sqlite3
 from unittest import TestCase
 
@@ -137,7 +138,7 @@ class TestPlayerRepository(TestCase):
         self.assertFalse(valid)
 
     def test_validate_name_format_returns_false_when_too_long(self):
-        long_name = 'a'.join("" for _ in xrange(34))
+        long_name = 'a'.join("" for _ in range(34))
 
         valid = self.players.validate_name_format(long_name)
 
