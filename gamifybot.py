@@ -9,6 +9,7 @@ This file contains a handler that forwards Slack events as commands for the game
 """
 from __future__ import print_function
 
+from builtins import object
 __license__ = "MIT"
 __author__ = "Florent Weber"
 __maintainer__ = __author__
@@ -28,7 +29,7 @@ ENV_BOT_TOKEN = 'SLACK_BOT_TOKEN'
 RTM_READ_DELAY = 1  # delay between readings from RTM
 
 
-class MessagesHandler:
+class MessagesHandler(object):
 
     def __init__(self, client, provided_game=None):
 
