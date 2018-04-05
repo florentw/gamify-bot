@@ -1,4 +1,4 @@
-[//]: # "Documentation generated for version ${GAMIFY_BOT_VERSION}"
+[//]: # "Documentation generated for version 1.2"
 
 
 # Gamify Bot
