@@ -7,6 +7,6 @@ COPY requirements.txt .
 
 RUN pip3 install --no-cache-dir -r requirements.txt
 RUN chmod +x /usr/src/app/release.sh
-RUN /usr/src/app/release.sh 1.0
+RUN /usr/src/app/release.sh 1.2
 
 CMD [ "python3", "/usr/src/app/gamifybot.py" ]
