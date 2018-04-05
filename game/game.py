@@ -8,6 +8,8 @@ Main logic and game rules:
 """
 from __future__ import absolute_import
 
+from builtins import str
+from builtins import object
 __license__ = "MIT"
 __author__ = "Florent Weber"
 __maintainer__ = __author__
@@ -24,7 +26,7 @@ from .task import Task, TaskRepository
 from .upgrade import Upgrade
 
 
-class Game:
+class Game(object):
     """
     A bot that gamifies routine development tasks that are shared among team members.
 
@@ -125,7 +127,7 @@ class Game:
 
         self.players.remove(player_id)
 
-        for task_id, assignee_id in self.assignments.list().items():
+        for task_id, assignee_id in list(self.assignments.list().items()):
             if assignee_id == player_id:
                 self.assignments.remove(task_id)
 
@@ -362,7 +364,7 @@ class Game:
 
         out = ":robot_face: *Commands*:\n"
 
-        for command, (function, description) in self.commands_dict.items():
+        for command, (function, description) in list(self.commands_dict.items()):
             out += "> *" + command + "*: " + description + "\n"
 
         out += "\n_ GamifyBot v%s - github.com/florentw/gamify-bot _\n" % __version__

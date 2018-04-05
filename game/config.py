@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+from builtins import object
 import os.path
 
 import yaml
@@ -8,7 +9,7 @@ import yaml
 DEFAULT_CONFIG_FILE = "bot-config.yml"
 
 
-class Config:
+class Config(object):
 
     def __init__(self, config=DEFAULT_CONFIG_FILE, root_path=None):
         self.root_path = root_path

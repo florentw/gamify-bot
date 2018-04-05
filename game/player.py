@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 # coding=utf-8
+from __future__ import division
+from builtins import str
+from past.utils import old_div
+from builtins import object
 import re
 from random import randint
 
@@ -10,7 +14,7 @@ MAX_USER_NAME_LEN = 32
 VALID_NAME_REGEX = "^[a-zA-Z0-9]+([_-]?[a-zA-Z0-9])*$"
 
 
-class Player:
+class Player(object):
     def __init__(self, player_id, name, points=0):
         self.player_id = player_id
         self.name = name
@@ -23,7 +27,7 @@ class Player:
         return self.player_id in admin_list
 
 
-class PlayerRepository:
+class PlayerRepository(object):
     """
     This class is responsible for the storage and querying of players.
     """
@@ -138,7 +142,7 @@ class PlayerRepository:
             if player.points is 0:
                 weight = 150  # Skew the distribution to assign more tasks to players with 0 points
             else:
-                weight = 100 - int(((float(player.points)) / total) * 100)
+                weight = 100 - int((old_div((float(player.points)), total)) * 100)
 
             weighted_list.append((weight, player))
 

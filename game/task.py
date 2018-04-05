@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+from builtins import str
+from builtins import object
 import time
 
 DEFAULT_MAX_TASK_POINTS = 42
@@ -8,7 +10,7 @@ DEFAULT_MAX_TASK_POINTS = 42
 TASK_ASSIGNMENT_PERIOD = 900  # Assignment period: after this timeout, tasks will be automatically assigned to someone
 
 
-class Task:
+class Task(object):
 
     def __init__(self, description, points=1, timestamp=None, uid=None):
         if timestamp is None:
@@ -27,7 +29,7 @@ class Task:
         return (time.time() - self.timestamp) > TASK_ASSIGNMENT_PERIOD
 
 
-class TaskRepository:
+class TaskRepository(object):
     """
     This class is responsible for the storage and querying of tasks.
     """
