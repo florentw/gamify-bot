@@ -7,6 +7,7 @@ Please refer to the README.md for details.
 
 This file contains a handler that forwards Slack events as commands for the game engine.
 """
+from __future__ import print_function
 
 __license__ = "MIT"
 __author__ = "Florent Weber"
