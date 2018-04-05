@@ -1,4 +1,5 @@
 # coding=utf-8
+from builtins import object
 import sqlite3
 from unittest import TestCase
 
@@ -6,7 +7,7 @@ from game.game import Game
 from gamifybot import MessagesHandler
 
 
-class SlackClientMock:
+class SlackClientMock(object):
 
     def __init__(self):
         self.invokes = []

@@ -1,4 +1,7 @@
 # coding=utf-8
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
 import sqlite3
 from unittest import TestCase
 
@@ -13,7 +16,7 @@ TASK_ID2 = "2"
 TEST_ADMIN_LIST = [USER_ID]
 
 
-class MockConf:
+class MockConf(object):
 
     def __init__(self, admins):
         self.admins = admins
@@ -365,7 +368,7 @@ class TestGame(TestCase):
         (status, help_output) = self.game.help()
 
         self.assertTrue(status)
-        for command, (function, description) in self.game.commands().items():
+        for command, (function, description) in list(self.game.commands().items()):
             self.assertTrue(command in help_output)
             self.assertTrue(description in help_output)
 
