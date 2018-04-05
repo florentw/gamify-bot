@@ -29,7 +29,7 @@ class TestTaskRepository(TestCase):
         self.assertEquals(task.description, "Hello world")
         self.assertEquals(task.points, 3)
         self.assertEquals(task.uid, 1)
-        self.assertTrue(task.timestamp > 0)
+        self.assertTrue(float(task.timestamp) > 0.0)
 
     def test_get_unknown_task_returns_none(self):
         self.tasks.insert(Task("Hello world", 3))
