@@ -2,8 +2,8 @@
 # coding=utf-8
 
 from builtins import object
-import os.path
 
+import os.path
 import yaml
 
 DEFAULT_CONFIG_FILE = "bot-config.yml"

@@ -1,6 +1,6 @@
 # coding=utf-8
-from builtins import object
 import sqlite3
+from builtins import object
 from unittest import TestCase
 
 from game.game import Game
