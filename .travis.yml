@@ -1,15 +1,18 @@
 language: pythons
 
 python:
-  - "2.7"
+  - "3.4"
+  - "3.5"
+  - "3.6"
 
 # install dependencies
 install:
-  - sudo pip install --upgrade pip
-  - sudo pip install -r requirements.txt
-  - sudo pip install pytest
-  - sudo pip install coverage
-  - sudo pip install pytest-cov
+  - sudo apt-get install -y python3-pip
+  - sudo pip3 install --upgrade pip
+  - sudo pip3 install -r requirements.txt
+  - sudo pip3 install pytest
+  - sudo pip3 install coverage
+  - sudo pip3 install pytest-cov
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
 
@@ -18,7 +21,7 @@ before_script:
 
 # run tests with coverage
 script:
-  - pytest --cov=.
+  - py.test --cov=.
 
 after_script:
   - coverage xml
