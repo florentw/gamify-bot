@@ -53,5 +53,4 @@ class TestConfig(TestCase):
         with self.assertRaises(IOError) as context:
             self.config_from('conf-invalid-format.yml')
 
-        print context.exception
         self.assertTrue('invalid YAML file format' in context.exception)
