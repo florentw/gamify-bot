@@ -8,14 +8,15 @@ Main logic and game rules:
 """
 from __future__ import absolute_import
 
-from builtins import str
-from builtins import object
 __license__ = "MIT"
 __author__ = "Florent Weber"
 __maintainer__ = __author__
 __email__ = "florent.weber@gmail.com"
 __status__ = "Production"
 __version__ = "${GAMIFY_BOT_VERSION}"
+
+from builtins import object
+from builtins import str
 
 import collections
 import sqlite3

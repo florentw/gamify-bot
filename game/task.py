@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-from builtins import str
-from builtins import object
 import time
+from builtins import object
+from builtins import str
 
 DEFAULT_MAX_TASK_POINTS = 42
 

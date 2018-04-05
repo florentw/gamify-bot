@@ -2,8 +2,10 @@
 # coding=utf-8
 
 from __future__ import absolute_import
-from builtins import range
+
 from builtins import object
+from builtins import range
+
 from .assignment import AssignmentRepository
 from .game import __version__
 

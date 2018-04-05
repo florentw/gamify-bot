@@ -1,5 +1,5 @@
-from builtins import range
 import sqlite3
+from builtins import range
 from unittest import TestCase
 
 from game.player import PlayerRepository, Player

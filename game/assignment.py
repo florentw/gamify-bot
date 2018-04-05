@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-from builtins import str
-from builtins import object
 import sqlite3
+from builtins import object
+from builtins import str
 
 
 class AssignmentRepository(object):

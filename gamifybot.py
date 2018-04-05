@@ -10,6 +10,7 @@ This file contains a handler that forwards Slack events as commands for the game
 from __future__ import print_function
 
 from builtins import object
+
 __license__ = "MIT"
 __author__ = "Florent Weber"
 __maintainer__ = __author__

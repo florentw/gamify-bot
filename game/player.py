@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # coding=utf-8
 from __future__ import division
-from builtins import str
-from past.utils import old_div
-from builtins import object
+
 import re
+from builtins import object
+from builtins import str
 from random import randint
+
+from past.utils import old_div
 
 MIN_USER_NAME_LEN = 2
 
