@@ -7,8 +7,6 @@ from builtins import object
 from builtins import str
 from random import randint
 
-from past.utils import old_div
-
 MIN_USER_NAME_LEN = 2
 
 MAX_USER_NAME_LEN = 32
@@ -144,7 +142,7 @@ class PlayerRepository(object):
             if player.points is 0:
                 weight = 150  # Skew the distribution to assign more tasks to players with 0 points
             else:
-                weight = 100 - int((old_div((float(player.points)), total)) * 100)
+                weight = 100 - int(((float(player.points)) // total) * 100)
 
             weighted_list.append((weight, player))
 
