@@ -2,13 +2,15 @@
 # coding=utf-8
 
 from __future__ import absolute_import
+from builtins import range
+from builtins import object
 from .assignment import AssignmentRepository
 from .game import __version__
 
 NO_VERSION = "0.0"
 
 
-class Upgrade:
+class Upgrade(object):
 
     def __init__(self, connection, upgrade_procedures=None):
         self.con = connection
@@ -76,7 +78,7 @@ class Upgrade:
             return False, "Trying to downgrade the data model " \
                           "from " + self.previous_version + " to " + target_version + ", this is not supported."
 
-        for next_major in xrange(major_to - major_from):
+        for next_major in range(major_to - major_from):
             self.upgrade_procedures[next_major]()
 
         cursor = self.con.cursor()

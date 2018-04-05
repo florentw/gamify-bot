@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+from builtins import str
+from builtins import object
 import sqlite3
 
 
-class AssignmentRepository:
+class AssignmentRepository(object):
     """
     This class is responsible for the storage and querying of assignments.
     """
@@ -22,7 +24,7 @@ class AssignmentRepository:
             return "No assignments."
 
         out = "Current assignments:\n"
-        for task_id, player_id in assignments.items():
+        for task_id, player_id in list(assignments.items()):
             out += "-> " + str(task_id) + " is assigned to " + player_id + "\n"
 
         return out
