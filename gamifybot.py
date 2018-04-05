@@ -2,14 +2,12 @@
 # coding=utf-8
 
 """
-GamifyBot main entry point, this file will run with python 2.7, and takes no arguments.
+GamifyBot main entry point, this file will run with python 3, and takes no arguments.
 Please refer to the README.md for details.
 
 This file contains a handler that forwards Slack events as commands for the game engine.
 """
 from __future__ import print_function
-
-from builtins import object
 
 __license__ = "MIT"
 __author__ = "Florent Weber"
@@ -17,6 +15,8 @@ __maintainer__ = __author__
 __email__ = "florent.weber@gmail.com"
 __status__ = "Production"
 __version__ = "${GAMIFY_BOT_VERSION}"
+
+from builtins import object
 
 import os
 import time

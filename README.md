@@ -29,7 +29,7 @@ If you are looking for a **user guide**, please refer to the following document:
 
 ## Running the bot with python on Linux
 
-You will need Python 2.7 and `pip` installed, then you can use `virtualenv` to create an environment for your instance.
+You will need Python 3 and `pip` installed, then you can use `virtualenv` to create an environment for your instance.
 
 At the root of the project directory, run:
 
@@ -38,7 +38,7 @@ At the root of the project directory, run:
 sudo pip install virtualenv
 
 # Creates the environment
-virtualenv --python=/usr/bin/python2.7 env
+virtualenv --python=/usr/bin/python3 env
 
 # Activate the environment
 source env/bin/activate
