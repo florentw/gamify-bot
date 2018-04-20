@@ -1,4 +1,6 @@
-language: pythons
+dist: trusty
+
+language: python
 
 python:
   - "3.5"
@@ -6,12 +8,11 @@ python:
 
 # install dependencies
 install:
-  - sudo apt-get install -y python3-pip
-  - sudo pip3 install --upgrade pip
-  - sudo pip3 install -r requirements.txt
-  - sudo pip3 install pytest
-  - sudo pip3 install coverage
-  - sudo pip3 install pytest-cov
+  - pip install --upgrade pip
+  - pip install -r requirements.txt
+  - pip install pytest
+  - pip install coverage
+  - pip install pytest-cov
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
 
