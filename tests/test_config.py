@@ -31,12 +31,6 @@ class TestConfig(TestCase):
 
         self.assertTrue('No such file or directory' in context.exception.strerror)
 
-    def test_init_config_with_unknown_db_file_throws_IOError(self):
-        with self.assertRaises(IOError) as context:
-            self.config_from('conf-invalid-db.yml')
-
-        self.assertTrue('db file does not exist' in context.exception.args[0])
-
     def test_init_config_with_missing_db_file_throws_KeyError(self):
         with self.assertRaises(KeyError) as context:
             self.config_from('conf-missing-db.yml')
