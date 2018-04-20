@@ -2,7 +2,7 @@
 
 # SQLite 3 database file to persist the game data
 db:
- file_name: "gamifybot.db"
+ file_name: "db/gamifybot.db"
 
 # Declare a list of Slack IDs here to indicate users that can perform admin commands.
 admin:
