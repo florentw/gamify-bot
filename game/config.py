@@ -33,9 +33,6 @@ class Config(object):
         if self.root_path is not None:
             db_file_name = os.path.join(self.root_path, db_file_name)
 
-        if not os.path.isfile(db_file_name):
-            raise IOError("db file does not exist: '" + db_file_name + "'")
-
     def db_file_name(self):
         if 'db' in self.conf and \
                 self.conf['db'] is not None and \
