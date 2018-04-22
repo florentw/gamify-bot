@@ -86,6 +86,16 @@ docker run -it --rm -e SLACK_BOT_TOKEN=$SLACK_BOT_TOKEN --name gamify-bot-replic
 
 **Warning**: Keep your `SLACK_BOT_TOKEN` secret, do not pass the value directly as argument to the command.
 
+You can persist the data inside the docker container on your host system by doing the following actions:
+1. Create a data directory on a suitable volume on your host system, e.g. `/my/own/datadir`
+2. Start your gamify-bot container like this:
+
+```bash
+docker run -it --rm -e SLACK_BOT_TOKEN=$SLACK_BOT_TOKEN -v /my/own/datadir:/usr/src/app/data --name gamify-bot-replica gamify-bot
+```
+
+The -v `/my/own/datadir:/usr/src/app/data` part of the command mounts the /my/own/datadir directory from the underlying host system as /usr/src/app/data inside the container, where gamify-bot by default will write its data files.
+
 ## License
 
 GamifyBot is licensed under the liberal [MIT License](./LICENSE).
