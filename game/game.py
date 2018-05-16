@@ -215,7 +215,7 @@ class Game(object):
         header = self.header(assignee_id)
         if not player.is_admin(self.config.admin_list()):
             if assignee_id != player.player_id:
-                return False, header + "you are not assigned to this task."
+                return False, self.header(player.player_id) + "you are not assigned to this task."
         else:
             cause = "\nAdmin player <@" + player_id + "> cancelled your assignment."
 
