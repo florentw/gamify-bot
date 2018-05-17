@@ -228,7 +228,7 @@ class TestGame(TestCase):
 
         (status, msg) = self.game.drop_task(USER_ID2, TASK_ID)
 
-        self.assert_error(status, msg, "you are not assigned to this task")
+        self.assert_error(status, msg, "{}you are not assigned to this task".format(self.game.header(USER_ID2)))
 
     def test_drop_task_returns_true_when_successful(self):
         self.join_and_add_task()
